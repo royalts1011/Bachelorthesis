@@ -1,0 +1,5 @@
+
+Connect to INB: ssh -l lentzsch 141.83.113.206
+Change PC: ssh pc19
+Mount Home Device: sshfs -o idmap=user lentzsch@141.83.113.206:/nfshome/lentzsch *Ordnerpfad*
+Install in home: pip3 -U install
