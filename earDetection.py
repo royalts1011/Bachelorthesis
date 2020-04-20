@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-earCascade = cv2.CascadeClassifier('Cascades/haarcascade_frontalface_default.xml')
+earCascade = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # open window dimensions
