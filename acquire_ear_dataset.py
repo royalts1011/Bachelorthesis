@@ -19,7 +19,7 @@ while(True):
     ret, img = cam.read()
     #img = cv2.flip(img, -1) # flip video image vertically
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    ears = ear_detector.detectMultiScale(gray, 1.3, 5)
+    ears = ear_detector.detectMultiScale(gray, 1.2, 5)
 
     for (x,y,w,h) in ears:
 
@@ -27,7 +27,7 @@ while(True):
         count += 1
 
         # Save the captured image into the datasets folder
-        cv2.imwrite("dataset/User." + ear_name + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
+        cv2.imwrite("dataset/User." + ear_name + '.' + str(count) + ".jpg", gray[2*y:2+(y+h),2*x:2*(x+w)])
 
         cv2.imshow('image', img)
 
