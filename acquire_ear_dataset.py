@@ -8,7 +8,6 @@ cam.set(4, 480) # set video height
 ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_leftear.xml')
 
 # For each person, enter one numeric face id
-ear_id = input('\n enter user id end press <return> ==>  ')
 ear_name = input('\n enter username end press <return> ==>  ')
 
 print("\n [INFO] Initializing face capture. Look the camera and wait ...")
