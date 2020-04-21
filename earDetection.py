@@ -3,14 +3,14 @@ import cv2
 
 earCascade = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(0)
 # open window dimensions
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640) # set Width
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) # set Height
 
 while True:
     # ignore boolean return Value, only receive image
-    _, img = cap.read()
+    ret, img = cap.read()
     # flip video frame horizontally as webcams take mirror image
     img = cv2.flip(img, 1) 
     # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

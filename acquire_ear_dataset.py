@@ -1,7 +1,7 @@
 import cv2
 import os
 
-cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cam = cv2.VideoCapture(0)
 # open window dimensions
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640) # set Width
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) # set Height
@@ -17,7 +17,7 @@ count = 0
 
 while(True):
     # ignore boolean return Value, only receive image
-    _, img = cam.read()
+    ret, img = cam.read()
     # flip video frame horizontally as webcams take mirror image
     img = cv2.flip(img, 1)
     # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
