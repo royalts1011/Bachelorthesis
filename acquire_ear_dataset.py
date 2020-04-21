@@ -27,7 +27,7 @@ while(True):
         count += 1
 
         # Save the captured image into the datasets folder
-        cv2.imwrite("dataset/User." + ear_name + '.' + str(count) + ".jpg", gray[2*y:2+(y+h),2*x:2*(x+w)])
+        cv2.imwrite("dataset/User." + ear_name + '.' + str(count) + ".jpg", gray[y:(y+h),x:(x+w)])
 
         cv2.imshow('image', img)
 
