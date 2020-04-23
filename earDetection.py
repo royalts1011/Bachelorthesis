@@ -23,8 +23,13 @@ while True:
     )
 
     for (x,y,w,h) in ears:
-        blue = (255,0,0)
-        cv2.rectangle(img, (x,y), (x+w,y+h), color=blue, thickness=1)
+        green = (0,255,0)
+        scaling = 0.1
+        start_w = int(w * scaling)
+        start_h= int(h * scaling)
+        stop_w = int(w * (1+scaling))
+        stop_h = int(h * (1+scaling))
+        cv2.rectangle(img, (x-start_w,y-start_h), (x+stop_w,y+stop_h), color=green, thickness=1)
 
         # roi_gray = gray[y:y+h, x:x+w]
         # roi_color = img[y:y+h, x:x+w]
