@@ -24,7 +24,7 @@ while True:
 
     for (x,y,w,h) in ears:
         green = (0,255,0)
-        scaling = 0.1
+        scaling = 0.2
         start_w = int(w * scaling)
         start_h= int(h * scaling)
         stop_w = int(w * (1+scaling))
