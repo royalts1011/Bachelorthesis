@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../..')
+
 from DLBio import pt_training
 import ds_cifar
 from torchvision.models.resnet import resnet50
@@ -57,7 +60,7 @@ SEED = 0
 pt_training.set_random_seed(SEED)
 
 
-evice = get_device()
+device = get_device()
 model = resnet50(pretrained=True)
 # cifar only has 10 classes
 model.fc = nn.Linear(2048, 10)
