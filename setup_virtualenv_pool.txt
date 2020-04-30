@@ -1,0 +1,18 @@
+### content of .profile
+# virtualenv and virtualenvwrapper
+export WORKON_HOME=$HOME/.virtualenvs
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+source ~/.local/bin/virtualenvwrapper.sh
+
+# python path for DLBio framework
+export PYTHONPATH=~/Documents/Bachelorarbeit:$PYTHONPATH
+
+
+
+
+
+### create virtualenv
+mkvirtualenv -p=/usr/bin/python3.7 Bachelorthesis
+
+### install all packages
+python3.7 -m pip install -r requirements.txt
