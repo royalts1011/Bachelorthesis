@@ -4,4 +4,8 @@
 *.jpeg
 *.pyc
 *.json
-*.DS-Store
+.DS_Store
+.vscode/
+.vscode/settings.json
+.idea/
+__pycache__/
