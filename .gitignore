@@ -4,6 +4,7 @@
 *.jpeg
 *.pyc
 *.json
+*.pt
 .DS_Store
 .vscode/
 .vscode/settings.json
