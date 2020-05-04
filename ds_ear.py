@@ -3,8 +3,8 @@ from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 
 
 DATA_FOLDER = 'dataset'
-RESIZE_X = 150
-RESIZE_Y = 100
+RESIZE_M = 150
+RESIZE_N = 100
 
 def get_dataloader(
     is_train=True, indeces=None, batch_size=32, num_workers=0,
@@ -34,7 +34,7 @@ def get_dataset(is_train=True, data_path=DATA_FOLDER):
     dataset = torchvision.datasets.ImageFolder(
         root=data_path,
         transform=torchvision.transforms.Compose([
-            torchvision.transforms.Resize((RESIZE_X, RESIZE_Y)),
+            torchvision.transforms.Resize((RESIZE_M, RESIZE_N)),
             torchvision.transforms.Lambda(lambda x: x.convert('RGB')),
             torchvision.transforms.ToTensor(),
 
@@ -43,12 +43,9 @@ def get_dataset(is_train=True, data_path=DATA_FOLDER):
                 [0.24703223, 0.24348513, 0.26158784]
             )   
         ])
+        
     )
-    return dataset
-
-
-
-    
-
+    print("helloow")
+    print(dataset.classes)
 
     return dataset
