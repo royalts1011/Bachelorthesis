@@ -9,3 +9,4 @@
 .vscode/settings.json
 .idea/
 __pycache__/
+*.png
