@@ -8,7 +8,6 @@ def get_dataloader(
     is_train=True, indeces=None, batch_size=32, num_workers=0,
         data_path=DATA_FOLDER):
     # indeces, if you only want to train a subset
-    # https://discuss.pytorch.org/t/train-on-a-fraction-of-the-data-set/16743/6
     dataset = get_dataset(is_train, data_path)
 
     if indeces is None:
@@ -27,3 +26,10 @@ def get_dataloader(
             sampler=SubsetRandomSampler(indeces)
         )
     return data_loader
+
+
+def get_dataset(is_train=True, data_path=DATA_FOLDER):
+    dataset = 
+
+
+    return dataset
