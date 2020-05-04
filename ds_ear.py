@@ -2,7 +2,9 @@ import torchvision
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 
 
-DATA_FOLDER = './ear-dataset-py'
+DATA_FOLDER = 'dataset'
+RESIZE_X = 150
+RESIZE_Y = 100
 
 def get_dataloader(
     is_train=True, indeces=None, batch_size=32, num_workers=0,
@@ -29,7 +31,24 @@ def get_dataloader(
 
 
 def get_dataset(is_train=True, data_path=DATA_FOLDER):
-    dataset = 
+    dataset = torchvision.datasets.ImageFolder(
+        root=data_path,
+        transform=torchvision.transforms.Compose([
+            torchvision.transforms.Resize((RESIZE_X, RESIZE_Y)),
+            torchvision.transforms.Lambda(lambda x: x.convert('RGB')),
+            torchvision.transforms.ToTensor(),
+
+            torchvision.transforms.Normalize(
+                [0.49139968, 0.48215841, 0.44653091],
+                [0.24703223, 0.24348513, 0.26158784]
+            )   
+        ])
+    )
+    return dataset
+
+
+
+    
 
 
     return dataset
