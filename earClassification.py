@@ -1,0 +1,1 @@
+from torchvision.models.mobilenet import mobilenet_v2

@@ -12,7 +12,6 @@ import json
 import matplotlib.pyplot as plt
 from os.path import join
 
-
 class Classification(pt_training.ITrainInterface):
     def __init__(self, model, device):
         self.model = model
@@ -38,8 +37,6 @@ def accuracy(y_pred, y_true):
     _, y_pred = y_pred.max(1)  # grab class predictions
     return (y_pred == y_true).float().mean().item()
 
-
-
 # define constants
 FOLDER = './class_sample'
 BATCH_SIZE = 32
@@ -59,12 +56,13 @@ SEED = 0
 # use seeds to ensure comparable results ()
 pt_training.set_random_seed(SEED)
 
-
 device = get_device()
+print(device)
 model = resnet50(pretrained=True)
 # cifar only has 10 classes
 model.fc = nn.Linear(2048, 10)
-model = model.to(device)
+#model = model.to(device)
+model = model.to('cuda:0')
 
 check_mkdir(FOLDER, is_dir=True)
 model_out = join(FOLDER, 'model.pt')
