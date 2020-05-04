@@ -20,8 +20,9 @@ os.mkdir(usr_dir)
 
 PLAYSOUND = False
 
-# set amount of pictures
+# set amount of pictures and pictures per head setting
 amount_pictures  = 80
+steps_of = 20
 
 # additional space around the ear to be captured
 # 0.1 is tightly around, 0.2 more generous 
@@ -61,23 +62,23 @@ while(True):
         cv2.imwrite(usr_dir + "/" + ear_name +  "{0:0=3d}".format(count) + ".png", img[y-start_h+1:y+stop_h, x-start_w+1:x+stop_w]) # +1 eliminates rectangle artifacts
         cv2.imshow('image', img)
 
-#        if count%20 == 0:
-#        # Change posistion instructions every ten pictures.
-#        if count%10 == 0 and (count/10)%(amount_pictures_per_step/10) == 0 and count != amount_pictures:
-#            current_step = int(count / 10)
-#            print("\n [INFO] Next step commencing... \n")
-#            print(user_instructions[current_step])
-#            # attention sound
-#            if PLAYSOUND: playsound('doubleTap.wav')
+        # display after defined set of steps 
+        if (count%steps_of) == 0 and count != amount_pictures:
+            current_step = int(count / steps_of)
+            print("\n [INFO] Next step commencing... \n")
+            # only include when instructions are wanted
+         #    print(user_instructions[current_step])
+            # attention sound
+            if PLAYSOUND: playsound('doubleTap.wav')
+            print(str(count))
+            input("Reposition your head and press <return> to continue.")
+
 
     k = cv2.waitKey(100) & 0xff # Press 'ESC' for exiting video
     if k == 27:
         break
     elif count >= amount_pictures: # Stop loop when the amount of pictures is collected
          break
-    elif count%20 == 0 and count != 0:
-        print(str(count))
-        input("Reposition your head and press <return> to continue.")
 
 
 if PLAYSOUND: playsound('doubleTap.wav')
