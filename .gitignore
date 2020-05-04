@@ -4,9 +4,9 @@
 *.jpeg
 *.pyc
 *.json
-*.pt
 .DS_Store
 .vscode/
 .vscode/settings.json
 .idea/
 __pycache__/
+*.png
