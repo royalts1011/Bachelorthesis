@@ -12,13 +12,12 @@ ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
 # For each person, enter a new identification name
 ear_name = input('\n Enter username end press <return> ==>  ')
-is_other = input('\n Should the user be part of the general dataset? (y/n)')
 
 dataset_dir = join(dirname(os.getcwd()), 'dataset')
 if not exists(dataset_dir):
     os.mkdir(dataset_dir)
 
-usr_dir = join(dataset_dir,  (ear_name, "ext_group")[is_other.lower() == "y"])
+usr_dir = join(dataset_dir, ear_name)
 if not exists(usr_dir):
     os.mkdir(usr_dir)
 
