@@ -10,10 +10,14 @@ cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) # set Height
 ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
 # For each person, enter a new identification name
-ear_name = input('\n enter username end press <return> ==>  ')
+ear_name = input('\n Enter username end press <return> ==>  ')
+is_other = input('\n Should the user be part of the general dataset? (y/n)')
 
-usr_dir = "dataset/" + ear_name
-os.mkdir(usr_dir)
+usr_dir = "dataset/" + (ear_name, "ext_group")[is_other.lower() == "y"]
+
+if not os.path.exists(usr_dir):
+    os.mkdir(usr_dir)
+
 #########################################################################
 # SET PARAMETERS
 #########################################################################
@@ -21,7 +25,7 @@ os.mkdir(usr_dir)
 PLAYSOUND = False
 
 # set amount of pictures and pictures per head setting
-amount_pictures  = 80
+amount_pictures  = 20
 steps_of = 20
 
 # additional space around the ear to be captured
