@@ -1,5 +1,6 @@
 import cv2
 import os
+from os.path import join
 from playsound import playsound
 
 cam = cv2.VideoCapture(0)
@@ -13,7 +14,7 @@ ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 ear_name = input('\n Enter username end press <return> ==>  ')
 is_other = input('\n Should the user be part of the general dataset? (y/n)')
 
-usr_dir = "dataset/" + (ear_name, "ext_group")[is_other.lower() == "y"]
+usr_dir = join("dataset",  (ear_name, "ext_group")[is_other.lower() == "y"])
 
 if not os.path.exists(usr_dir):
     os.mkdir(usr_dir)
@@ -63,7 +64,7 @@ while(True):
         count += 1
 
         # Save the captured image into the datasets folder
-        cv2.imwrite(usr_dir + "/" + ear_name +  "{0:0=3d}".format(count) + ".png", img[y-start_h+1:y+stop_h, x-start_w+1:x+stop_w]) # +1 eliminates rectangle artifacts
+        cv2.imwrite(join(usr_dir, (ear_name + "{0:0=3d}".format(count) + ".png")), img[y-start_h+1:y+stop_h, x-start_w+1:x+stop_w]) # +1 eliminates rectangle artifacts
         cv2.imshow('image', img)
 
         # display after defined set of steps 
