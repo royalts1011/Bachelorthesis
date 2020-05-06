@@ -1,6 +1,6 @@
 import cv2
 import os
-from os.path import join
+from os.path import join, dirname, exists
 from playsound import playsound
 
 cam = cv2.VideoCapture(0)
@@ -14,9 +14,12 @@ ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 ear_name = input('\n Enter username end press <return> ==>  ')
 is_other = input('\n Should the user be part of the general dataset? (y/n)')
 
-usr_dir = join("dataset",  (ear_name, "ext_group")[is_other.lower() == "y"])
+dataset_dir = join(dirname(os.getcwd()), 'dataset')
+if not exists(dataset_dir):
+    os.mkdir(dataset_dir)
 
-if not os.path.exists(usr_dir):
+usr_dir = join(dataset_dir,  (ear_name, "ext_group")[is_other.lower() == "y"])
+if not exists(usr_dir):
     os.mkdir(usr_dir)
 
 #########################################################################
