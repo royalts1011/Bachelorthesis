@@ -4,7 +4,7 @@ from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 
-DATA_FOLDER = '../dataset'
+DATA_FOLDER = '../AMI'
 RESIZE_M = 150
 RESIZE_N = 100
 
