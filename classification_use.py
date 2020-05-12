@@ -19,7 +19,7 @@ def get_data(file):
 
 model = torch.load('/nfshome/lentzsch/Documents/Bachelorarbeit/Bachelorthesis/class_sample/model.pt')
 
-data = get_data('/nfshome/lentzsch/Documents/Bachelorarbeit/Test/87_03.jpg')
+data = get_data('/nfshome/lentzsch/Documents/Bachelorarbeit/test/konrad001.png')
 data_tensor = torch.from_numpy(data)
 data_tensor = data_tensor.permute(3, 0, 1, 2)
 data_tensor = data_tensor.type('torch.cuda.FloatTensor')
@@ -30,6 +30,5 @@ with torch.no_grad():
 	pred = pred.cpu().numpy()
 
 classes_ = np.argmax(pred, 1)
-print(pred)
 print(classes_)
 a=1
