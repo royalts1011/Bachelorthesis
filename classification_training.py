@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../..')
 from DLBio import pt_training
-import ds_BA
+import ds_ear
 from torchvision.models.mobilenet import mobilenet_v2
 import torch.nn as nn
 from DLBio.pytorch_helpers import get_device, get_num_params
@@ -44,7 +44,7 @@ FOLDER = './class_sample'
 OPT_TYPE = 'Adam'
 LEARNING_RATE = 0.0001
 WEIGHT_DECAY = 0.000001
-EPOCHS = 15
+EPOCHS = 10
 LR_STEPS = 3
 DO_EARLY_STOPPING = True
 STOP_AFTER = 10
@@ -56,12 +56,13 @@ BATCH_SIZE = 32
 NUM_WORKERS = 1
 
 # use seeds to ensure comparable results ()
-pt_training.set_random_seed(SEED)
+# pt_training.set_random_seed(SEED)
 
 # apply to device
 device = get_device()
 print(device)
 model = mobilenet_v2(pretrained=True)
+model.classifier.add_module("2", nn.Linear(1000, 100))
 model = model.to(device)
 
 # definde folder to save model and log file
@@ -77,30 +78,31 @@ with open(join(FOLDER, 'model_specs.json'), 'w') as file:
     }, file)
 
 # define indicies to split Data
-N = len(ds_BA.get_dataset())
+N = len(ds_ear.get_dataset())
+n_80 = int(.8*N)
 n_60 = int(.6*N)
 n_20 = int(.2*N)
 
 rand_indeces = np.random.permutation(N)
-train_indeces = rand_indeces[:n_60]
-valid_indeces = rand_indeces[n_60:]
+train_indeces = rand_indeces[:n_80]
+valid_indeces = rand_indeces[n_80:]
 #valid_indeces = rand_indeces[n_60:n_60+n_20]
 #test_indeces = rand_indeces[n_60+n_20:]
 
 # definde data loader
-dl_train = ds_BA.get_dataloader(
+dl_train = ds_ear.get_dataloader(
     indeces=train_indeces,
     batch_size=BATCH_SIZE,
     num_workers=NUM_WORKERS
 )
 
-dl_valid = ds_BA.get_dataloader(
+dl_valid = ds_ear.get_dataloader(
     indeces=valid_indeces,
     batch_size=BATCH_SIZE,
     num_workers=NUM_WORKERS
 )
 
-# dl_test = ds_BA.get_dataloader(
+# dl_test = ds_ear.get_dataloader(
 #     indeces=test_indeces,
 #     batch_size=BATCH_SIZE,
 #     num_workers=NUM_WORKERS
@@ -144,3 +146,4 @@ plt.plot(log['acc'], label='acc')
 plt.plot(log['val_acc'], label='val_acc')
 plt.legend()
 plt.grid()
+plt.show()
