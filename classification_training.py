@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../..')
 from DLBio import pt_training
-import ds_BA
+import ds_ear
 from torchvision.models.mobilenet import mobilenet_v2
 import torch.nn as nn
 from DLBio.pytorch_helpers import get_device, get_num_params
