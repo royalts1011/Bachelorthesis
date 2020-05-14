@@ -11,7 +11,7 @@ cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) # set Height
 ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
 # For each person, enter a new identification name
-ear_name = input('\n Enter username end press <return> ==>  ')
+ear_name = input('\n Enter name end press <return> ==>  ')
 
 dataset_dir = join(dirname(os.getcwd()), 'dataset')
 if not exists(dataset_dir):
@@ -28,7 +28,7 @@ if not exists(usr_dir):
 PLAYSOUND = False
 
 # set amount of pictures and pictures per head setting
-amount_pictures  = 20
+amount_pictures  = 80
 steps_of = 20
 
 # additional space around the ear to be captured
@@ -89,6 +89,7 @@ while(True):
 
 
 if PLAYSOUND: playsound('doubleTap.wav')
+print(count)
 # Do a bit of cleanup
 print("\n [INFO] Exiting Program.")
 cam.release()
