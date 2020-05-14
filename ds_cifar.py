@@ -2,7 +2,7 @@ import torchvision
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 
 # best practice: keep all constants in one config file
-#from config import DATA_FOLDER, CIFAR10_RESIZE
+# from config import DATA_FOLDER, CIFAR10_RESIZE
 
 DATA_FOLDER = '../cifar-10-batches-py'  # change me
 CIFAR10_RESIZE = 224  # so you can eval a imagenet pre-trained network
