@@ -36,17 +36,13 @@ def get_dataset(data_path=DATA_FOLDER, is_train=True):
     transform_dict = {
         'train': td.transforms_train(
                     (RESIZE_Y, RESIZE_X),
-                    [0.49139968, 0.48215841, 0.44653091],
-                    # alternate mean: [0.485, 0.456, 0.406],
-                    [0.24703223, 0.24348513, 0.26158784]
-                    # alternate std: [0.229, 0.224, 0.225]
+                    [0.485, 0.456, 0.406],
+                    [0.229, 0.224, 0.225]
                     ),
         'valid_and_test': td.transforms_valid_and_test(
                     (RESIZE_Y, RESIZE_X),
-                    [0.49139968, 0.48215841, 0.44653091],
-                    # alternate mean: [0.485, 0.456, 0.406],
-                    [0.24703223, 0.24348513, 0.26158784]
-                    # alternate std: [0.229, 0.224, 0.225]
+                    [0.485, 0.456, 0.406],
+                    [0.229, 0.224, 0.225]
                     )
         }
     
@@ -54,4 +50,6 @@ def get_dataset(data_path=DATA_FOLDER, is_train=True):
                     root = data_path,
                     transform=transform_dict['train' if is_train else 'valid_and_test']
                     ) 
+
+    print(dataset.classes)
     return dataset
