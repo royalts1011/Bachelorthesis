@@ -5,7 +5,7 @@ from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 
-DATA_FOLDER = '../AMI'
+DATA_FOLDER = '../dataset'
 RESIZE_Y = 150
 RESIZE_X = 100
 
@@ -54,5 +54,4 @@ def get_dataset(data_path=DATA_FOLDER, is_train=True):
                     root = data_path,
                     transform=transform_dict['train' if is_train else 'valid_and_test']
                     ) 
-
     return dataset
