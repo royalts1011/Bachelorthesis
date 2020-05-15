@@ -9,7 +9,7 @@ from os.path import splitext, split, dirname, join, isdir
 # Make sure pictures_to_move and the step are valid entries
 ########################################################################
 # This moves picture 001, 011, 021, ..., 071
-pictures_to_move = 10 
+pictures_to_move = 8 
 step = 10
 ########################################################################
 
