@@ -1,5 +1,4 @@
 from torchvision import transforms
-#from PytorchScripts.Transforms import MyTransforms
 import MyTransforms
 
 def transforms_train(img_shape, norm_mean, norm_std):
@@ -20,9 +19,9 @@ def transforms_train(img_shape, norm_mean, norm_std):
     return transformations
 
 def transforms_valid_and_test(img_shape, norm_mean, norm_std):
-    #mean_pil = tuple([int(x*255) for x in norm_mean])
     transformations = transforms.Compose([
         transforms.Resize(img_shape),
+        # transforms.Lambda(lambda x: x.convert('RGB')),
         transforms.ToTensor(),
         transforms.Normalize(mean=norm_mean, std=norm_std)
         ])
