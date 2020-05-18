@@ -1,5 +1,6 @@
 import cv2
 import os
+from os.path import join, dirname, exists
 from playsound import playsound
 
 cam = cv2.VideoCapture(0)
@@ -10,10 +11,16 @@ cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) # set Height
 ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
 # For each person, enter a new identification name
-ear_name = input('\n enter username end press <return> ==>  ')
+ear_name = input('\n Enter name end press <return> ==>  ')
 
-usr_dir = "dataset/" + ear_name
-os.mkdir(usr_dir)
+dataset_dir = join(dirname(os.getcwd()), 'dataset')
+if not exists(dataset_dir):
+    os.mkdir(dataset_dir)
+
+usr_dir = join(dataset_dir, ear_name)
+if not exists(usr_dir):
+    os.mkdir(usr_dir)
+
 #########################################################################
 # SET PARAMETERS
 #########################################################################
@@ -59,7 +66,7 @@ while(True):
         count += 1
 
         # Save the captured image into the datasets folder
-        cv2.imwrite(usr_dir + "/" + ear_name +  "{0:0=3d}".format(count) + ".png", img[y-start_h+1:y+stop_h, x-start_w+1:x+stop_w]) # +1 eliminates rectangle artifacts
+        cv2.imwrite(join(usr_dir, (ear_name + "{0:0=3d}".format(count) + ".png")), img[y-start_h+1:y+stop_h, x-start_w+1:x+stop_w]) # +1 eliminates rectangle artifacts
         cv2.imshow('image', img)
 
         # display after defined set of steps 
@@ -82,6 +89,7 @@ while(True):
 
 
 if PLAYSOUND: playsound('doubleTap.wav')
+print(count)
 # Do a bit of cleanup
 print("\n [INFO] Exiting Program.")
 cam.release()
