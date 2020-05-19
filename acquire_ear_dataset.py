@@ -31,10 +31,15 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
 
     ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
-    # For each person, enter a new identification name
-    ear_name = input('\n Enter name end press <return> ==>  ')
+    if is_authentification == False:
+        # For each person, enter a new identification name
+        ear_name = input('\n Enter name end press <return> ==>  ')
+        dataset_dir = join(dirname(os.getcwd()), 'dataset')
+    else:
+        ear_name = 'unknown'
+        dataset_dir = join(dirname(os.getcwd()), 'auth_dataset')
 
-    dataset_dir = join(dirname(os.getcwd()), 'dataset')
+    
     if not exists(dataset_dir):
         os.mkdir(dataset_dir)
 
