@@ -1,4 +1,3 @@
-
 # %%
 import torch
 import numpy as np
@@ -6,14 +5,18 @@ import transforms_data as td
 from PIL import Image
 import glob
 from torch import cuda
+import acquire_ear_dataset as a
+import os
+import shutil
 
 
-CATEGORIES = ["Falco", "Jesse", "Konrad", "Nils", "Johannes", "Sarah"]
+
+CATEGORIES = ["falco_lem", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh"]
 CATEGORIES.sort()
 AUTHORIZED = ["Falco","Konrad"]
 RESIZE_Y = 150
 RESIZE_X = 100
-DATA_TEST_FOLDER = "../test/*png"
+DATA_TEST_FOLDER = "../auth_dataset/unknown-auth/*png"
 
 model = torch.load('./class_sample/model.pt')
 
@@ -37,6 +40,11 @@ for f in files:
 
 
 # %%
+# Bilder aufnehmen
+a.capture_ear_images(amount_pic=10, pic_per_stage=10, is_authentification=True)
+
+
+# %%
 all_classes = []
 summ_pred = np.empty(1)
 for i in image_array:
@@ -57,6 +65,9 @@ print(summ_pred)
 
 
 # %%
+# Hier besser die Warscheinlichkeit über alle Bilder ermitteln und darüber prüfen.
+# Beispiel: Bei 5 Bilder muss die aufsummierte Wahrscheinlichkeit für eine Person >4 sein!!
+
 NUMBER_AUTHORIZED = int(.7*len(image_array))
 authentification_dict = {CATEGORIES[i]:all_classes.count(i) for i in all_classes}
 print(authentification_dict) 
@@ -68,3 +79,8 @@ for a in authentification_dict:
     else:
         print("Access denied")
         break
+
+
+# %%
+shutil.rmtree('../auth_dataset/unknown-auth')
+
