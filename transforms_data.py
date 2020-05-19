@@ -21,7 +21,7 @@ def transforms_train(img_shape, norm_mean, norm_std):
 def transforms_valid_and_test(img_shape, norm_mean, norm_std):
     transformations = transforms.Compose([
         transforms.Resize(img_shape),
-        # transforms.Lambda(lambda x: x.convert('RGB')),
+        transforms.Lambda(lambda x: x.convert('RGB')),
         transforms.ToTensor(),
         transforms.Normalize(mean=norm_mean, std=norm_std)
         ])
