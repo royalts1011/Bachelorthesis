@@ -22,12 +22,27 @@ INSTRUCTIONS = ["\n [INFO] Initializing ear capture. Turn your head left. Your r
 #########################################################################
 # assert PICTURES/10 <= (len(user_instructions))
 
+def make_720(object):
+    object.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    object.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+def make_480(object):
+    object.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    object.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+def make_240(object):
+    object.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+    object.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+
+def rescale_frame(frame, percent=75):
+    width = int(frame.shape[1] * percent/ 100)
+    height = int(frame.shape[0] * percent/ 100)
+    dim = (width, height)
+    return cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
+
 def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, is_authentification=False):
 
-    cam = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(0)
     # open window dimensions
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640) # set Width
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) # set Height
+    make_480(cap)
 
     ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
@@ -50,7 +65,7 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
 
     while True:
         # receive image
-        ret, frame = cam.read()
+        ret, frame = cap.read()
         # flip video frame horizontally to show it "mirror-like"
         frame = cv2.flip(frame, 1)
         rects = ear_detector.detectMultiScale(frame, 1.1, 5)
@@ -93,9 +108,9 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
 
     # Do a bit of cleanup
     print("\n [INFO] Exiting Program.")
-    cam.release()
+    cap.release()
     cv2.destroyAllWindows()
-    
+
 
 if __name__=='__main__':
     capture_ear_images()    
