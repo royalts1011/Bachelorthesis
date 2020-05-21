@@ -1,4 +1,7 @@
+
 # %%
+import sys
+sys.path.append('../..')
 import torch
 import numpy as np
 import transforms_data as td
@@ -8,17 +11,24 @@ from torch import cuda
 import acquire_ear_dataset as a
 import os
 import shutil
+from DLBio.pytorch_helpers import get_device
 
 
 
-CATEGORIES = ["falco_lem", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh"]
+CATEGORIES = ["falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
 CATEGORIES.sort()
-AUTHORIZED = ["Falco","Konrad"]
+AUTHORIZED = ["falco_len","konrad_von"]
 RESIZE_Y = 150
 RESIZE_X = 100
 DATA_TEST_FOLDER = "../auth_dataset/unknown-auth/*png"
+DEVICE = get_device()
 
-model = torch.load('./class_sample/model.pt')
+model = torch.load('./class_sample/model.pt', DEVICE)
+
+
+# %%
+# Bilder aufnehmen
+a.capture_ear_images(amount_pic=10, pic_per_stage=10, is_authentification=True)
 
 
 # %%
@@ -37,11 +47,6 @@ for f in files:
         image_array.append(image_transformed.type('torch.cuda.FloatTensor'))
     else:
         image_array.append(image_transformed.type('torch.FloatTensor'))
-
-
-# %%
-# Bilder aufnehmen
-a.capture_ear_images(amount_pic=10, pic_per_stage=10, is_authentification=True)
 
 
 # %%
@@ -68,19 +73,18 @@ print(summ_pred)
 # Hier besser die Warscheinlichkeit über alle Bilder ermitteln und darüber prüfen.
 # Beispiel: Bei 5 Bilder muss die aufsummierte Wahrscheinlichkeit für eine Person >4 sein!!
 
-NUMBER_AUTHORIZED = int(.7*len(image_array))
+NUMBER_AUTHORIZED = int(.3*len(image_array))
 authentification_dict = {CATEGORIES[i]:all_classes.count(i) for i in all_classes}
 print(authentification_dict) 
-
+acces = False
 for a in authentification_dict:
     if a in AUTHORIZED and summ_pred[0][CATEGORIES.index(a)]>= NUMBER_AUTHORIZED:
         print("Access granted! Welcome "  + a + "!")
+        acces = True
         break
-    else:
-        print("Access denied")
-        break
+
+if not acces : print("Acces Denied")
 
 
 # %%
 shutil.rmtree('../auth_dataset/unknown-auth')
-
