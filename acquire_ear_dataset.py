@@ -25,6 +25,9 @@ INSTRUCTIONS = ["\n [INFO] Initializing ear capture. Turn your head left. Your r
 def make_720(object):
     object.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     object.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+def make_540(object):
+    object.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
+    object.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)
 def make_480(object):
     object.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     object.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
@@ -42,7 +45,7 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
 
     cap = cv2.VideoCapture(0)
     # open window dimensions
-    make_480(cap)
+    make_540(cap)
 
     ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
