@@ -87,4 +87,4 @@ if not acces : print("Acces Denied")
 
 
 # %%
-shutil.rmtree('../auth_dataset/unknown-auth')
+#shutil.rmtree('../auth_dataset/unknown-auth')
