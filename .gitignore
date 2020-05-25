@@ -1,0 +1,13 @@
+# Default ignored files
+/workspace.xml
+*.jpg
+*.jpeg
+*.pyc
+*.json
+.DS_Store
+.vscode/
+.vscode/settings.json
+.idea/
+__pycache__/
+*.png
+model.pt
