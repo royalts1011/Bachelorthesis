@@ -1,11 +1,4 @@
-#!/home/pi/.virtualenvs/Bachelorthesis/bin/python3.7
-
-# activate_this= "/home/pi/.virtualenvs/Bachelorthesis/bin/activate_this.py"
-# with open(activate_this) as f:
-#     code = compile(f.read(), )
-
 activate = '/home/pi/.virtualenvs/Bachelorthesis/bin/activate_this.py'
-#import 'home/pi/.virtualenvs/Bachelorthesis/bin/activate_this'
 exec(open(activate).read(),{'__file__': activate})
 
 # %%
@@ -17,12 +10,12 @@ import numpy as np
 import transforms_data as td
 from PIL import Image
 import glob
+from time import sleep
 from torch import cuda
 import acquire_ear_dataset as a
 import os
 import shutil
 from DLBio.pytorch_helpers import get_device
-from time import sleep
 
 # Pin imports
 from gpiozero import LED
