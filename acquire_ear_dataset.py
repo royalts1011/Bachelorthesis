@@ -13,6 +13,8 @@ STEP = 20
 # additional space around the ear to be captured
 # 0.1 is tightly around, 0.2 more generous 
 SCALING = 0.2
+SCALING_H = 0.05
+SCALING_W = 0.2 
 
 INSTRUCTIONS = ["\n [INFO] Initializing ear capture. Turn your head left. Your right ear should then be facing the camera.", 
                 "Look into the camera and slowly turn your head 45 degrees to the left",
@@ -45,7 +47,7 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
 
     cap = cv2.VideoCapture(0)
     # open window dimensions
-    make_540(cap)
+    make_720(cap)
 
     ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
@@ -75,10 +77,10 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
 
         for (x,y,w,h) in rects:
             # bounding box will be bigger by increasing the scaling
-            left = x - int(w * margin)
-            top = y - int(h * margin)
-            right = x + int(w * (1+margin))
-            bottom = y + int(h * (1+margin))
+            left = x - int(w * SCALING_W)
+            top = y - int(h * SCALING_H)
+            right = x + int(w * (1+SCALING_W))
+            bottom = y + int(h * (1+SCALING_H))
             green = (0,255,0)
             cv2.rectangle(frame, (left, top), (right, bottom), color=green, thickness=1)   
             count += 1
