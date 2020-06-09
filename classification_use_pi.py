@@ -25,11 +25,12 @@ from Adafruit_CharLCD import Adafruit_CharLCD
 
 
 
-CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
+#CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
+CATEGORIES = ["falco_len", "nils_loo", "alissa_buh", "gregor_spi"]
 CATEGORIES.sort()
-AUTHORIZED = ["falco_len","konrad_von"]
-RESIZE_Y = 150
-RESIZE_X = 100
+AUTHORIZED = ["falco_len"]
+RESIZE_Y = 280
+RESIZE_X = 230
 DATA_TEST_FOLDER = "../auth_dataset/unknown-auth/*png"
 DEVICE = get_device()
 
@@ -142,8 +143,7 @@ try:
 
 finally:
     # clear outputs
-    lcd.clear()
-#     GPIO.cleanup()
+    lcd.clear(
 
     # %%
     shutil.rmtree('../auth_dataset/unknown-auth')
