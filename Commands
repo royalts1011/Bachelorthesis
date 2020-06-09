@@ -5,3 +5,5 @@ Mount Home Device: sshfs -o idmap=user lentzsch@141.83.113.206:/nfshome/lentzsch
 Install in home: pip3 -U install
 Show RAM: free -m
 Show GPU: nvidia-smi
+Show last log in: Last | tac 
+Show process: top
