@@ -143,7 +143,7 @@ try:
 
 finally:
     # clear outputs
-    lcd.clear(
+    lcd.clear()
 
     # %%
     shutil.rmtree('../auth_dataset/unknown-auth')
