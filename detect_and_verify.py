@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 def detect_face(img):
     # The file containing the pretrained classifier 
-    haar_file = 'haarcascade_frontalface_default.xml'
+    haar_file = 'haarcascade_mcs_rightear.xm'
   
     # Image to be resized to this shape
     (width, height) = (224, 224)     
@@ -98,4 +98,4 @@ def verify_face(img, username):
 # Here it is assumed that some app has provided with a webcam click called 'img' at the time of login.
 face_detected = detect_face(img)  
 # The username is provided at the time of login.
-flag = verify_face(face_detected, username)
+flag = verify_face(face_detected, 'falco_len')
