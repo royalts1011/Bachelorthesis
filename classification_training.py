@@ -1,4 +1,5 @@
-
+# To add a new cell, type '# %%'
+# To add a new markdown cell, type '# %% [markdown]'
 # %%
 import sys
 sys.path.append('../..')
@@ -14,6 +15,7 @@ import json
 import matplotlib.pyplot as plt
 from os.path import join
 import numpy as np
+from classification_test import TestMyModel
 
 
 # %%
@@ -45,13 +47,13 @@ def accuracy(y_pred, y_true):
 
 # %%
 # influences learning rate, weight decay, data folder path and training classes
-IS_OWN_DATASET = True
+IS_OWN_DATASET = False
 
 # define constants
 LEARNING_RATE = (0.001, 0.0001)[IS_OWN_DATASET] # FORM: (AMI, dataset)
 WEIGHT_DECAY = (0.0001, 0.1)[IS_OWN_DATASET] # FORM: (AMI, dataset)
 DATASET_FOLDER = ('../AMI', '../dataset')[IS_OWN_DATASET]
-MAP_TO_CLASSES = (100, 9)[IS_OWN_DATASET]
+MAP_TO_CLASSES = (100, 4)[IS_OWN_DATASET]
 
 FOLDER = './class_sample'
 OPT_TYPE = 'Adam'
@@ -74,10 +76,8 @@ model = mobilenet_v2(pretrained=True)
 # Remap the classification layer to the correct amount of classes
 model.classifier[1] = nn.Linear(in_features=model.classifier[1].in_features, out_features=MAP_TO_CLASSES)
 
-# print(cuda.is_available())
-# if cuda.is_available(): model.to('cuda:0')
-
 device = get_device()
+# device = 'cpu'
 print(device)
 model.to(device)
 
@@ -101,15 +101,15 @@ n_80 = int(.8*N)
 n_60 = int(.6*N)
 n_20 = int(.2*N)
 
-rand_indeces = np.random.permutation(N)
-train_indeces = rand_indeces[:n_60]
-valid_indeces = rand_indeces[n_60:]
-#valid_indeces = rand_indeces[n_60:n_60+n_20]
-#test_indeces = rand_indeces[n_60+n_20:]
+rand_indices = np.random.permutation(N)
+train_indices = rand_indices[:n_60]
+# valid_indices = rand_indices[n_60:]
+valid_indices = rand_indices[n_60:n_60+n_20]
+test_indices = rand_indices[n_60+n_20:]
 
 # definde data loader
 dl_train = ds_ear.get_dataloader(
-    indeces=train_indeces,
+    indices=train_indices,
     batch_size=BATCH_SIZE,
     num_workers=NUM_WORKERS,
     is_train=True,
@@ -117,22 +117,23 @@ dl_train = ds_ear.get_dataloader(
 )
 
 dl_valid = ds_ear.get_dataloader(
-    indeces=valid_indeces,
+    indices=valid_indices,
     batch_size=BATCH_SIZE,
     num_workers=NUM_WORKERS,
     is_train=False,
     data_path=DATASET_FOLDER
 )
 
-# dl_test = ds_ear.get_dataloader(
-#     indeces=test_indeces,
-#     batch_size=BATCH_SIZE,
-#     num_workers=NUM_WORKERS,
-#     is_train=False
-# )
+dl_test = ds_ear.get_dataloader(
+    indices=test_indices,
+    batch_size=BATCH_SIZE,
+    num_workers=NUM_WORKERS,
+    is_train=False,
+    data_path=DATASET_FOLDER
+)
 
 # with open('test_indizes.txt', 'w') as file:
-#     for idx in test_indeces:
+#     for idx in test_indices:
 #         file.write("%i\n" % idx)
 
 
@@ -179,33 +180,45 @@ plt.grid()
 
 
 # %%
-# Execute this cell if you want the current variables to be added to the csv-file
-import csv
+# # Execute this cell if you want the current variables to be added to the csv-file
+# import csv
 
-with open(log_file, 'r') as file:
-    log = json.load(file)
-    ACC = log['acc']
-    VAL_ACC = log['val_acc']
+# with open(log_file, 'r') as file:
+#     log = json.load(file)
+#     ACC = log['acc']
+#     VAL_ACC = log['val_acc']
 
-with open('var_log.csv', 'a') as f:
-    writer = csv.writer(f, delimiter=',', lineterminator='\n')
-    writer.writerow([
-        LEARNING_RATE,
-        WEIGHT_DECAY,
-        MAP_TO_CLASSES,
-        OPT_TYPE,
-        EPOCHS,
-        LR_STEPS,
-        DO_EARLY_STOPPING,
-        STOP_AFTER,
-        SEED,
-        BATCH_SIZE,
-        NUM_WORKERS,
-        # saves a list of len(EPOCHS) with accuracies
-        ACC,
-        VAL_ACC,
-        # insert optional comment
-        ""
-    ])
-f.close()
+# with open('var_log.csv', 'a') as f:
+#     writer = csv.writer(f, delimiter=',', lineterminator='\n')
+#     writer.writerow([
+#         DATASET_FOLDER.split('/')[1],        
+#         LEARNING_RATE,
+#         WEIGHT_DECAY,
+#         MAP_TO_CLASSES,
+#         OPT_TYPE,
+#         EPOCHS,
+#         LR_STEPS,
+#         DO_EARLY_STOPPING,
+#         STOP_AFTER,
+#         SEED,
+#         BATCH_SIZE,
+#         NUM_WORKERS,
+#         # saves a list of len(EPOCHS) with accuracies
+#         ACC,
+#         VAL_ACC,
+#         # insert optional comment
+#         ""
+#     ])
+# f.close()
+
+
+# %%
+test = TestMyModel(dl_test)
+
+test.load_model()
+# test.begin_testing()
+
+
+# %%
+
 
