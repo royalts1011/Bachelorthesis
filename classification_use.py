@@ -15,7 +15,7 @@ from DLBio.pytorch_helpers import get_device
 
 
 
-CATEGORIES = ["falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
+CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
 CATEGORIES.sort()
 AUTHORIZED = ["falco_len","konrad_von"]
 RESIZE_Y = 150
@@ -51,7 +51,7 @@ for f in files:
 
 # %%
 all_classes = []
-summ_pred = np.empty(1)
+summ_pred = np.zeros(1)
 for i in image_array:
 	with torch.no_grad():
 		pred = model(i)
@@ -68,10 +68,6 @@ for i in image_array:
 print(all_classes)
 print(summ_pred)
 
-
-# %%
-# Hier besser die Warscheinlichkeit über alle Bilder ermitteln und darüber prüfen.
-# Beispiel: Bei 5 Bilder muss die aufsummierte Wahrscheinlichkeit für eine Person >4 sein!!
 
 NUMBER_AUTHORIZED = int(.3*len(image_array))
 authentification_dict = {CATEGORIES[i]:all_classes.count(i) for i in all_classes}

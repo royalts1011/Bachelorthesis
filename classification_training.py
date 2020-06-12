@@ -1,3 +1,4 @@
+
 # %%
 import sys
 sys.path.append('../..')
@@ -50,11 +51,11 @@ IS_OWN_DATASET = True
 LEARNING_RATE = (0.001, 0.0001)[IS_OWN_DATASET] # FORM: (AMI, dataset)
 WEIGHT_DECAY = (0.0001, 0.1)[IS_OWN_DATASET] # FORM: (AMI, dataset)
 DATASET_FOLDER = ('../AMI', '../dataset')[IS_OWN_DATASET]
-MAP_TO_CLASSES = (100, 5)[IS_OWN_DATASET]
+MAP_TO_CLASSES = (100, 9)[IS_OWN_DATASET]
 
 FOLDER = './class_sample'
 OPT_TYPE = 'Adam'
-EPOCHS = 10
+EPOCHS = 15
 LR_STEPS = 3
 DO_EARLY_STOPPING = True
 STOP_AFTER = 10
@@ -73,8 +74,12 @@ model = mobilenet_v2(pretrained=True)
 # Remap the classification layer to the correct amount of classes
 model.classifier[1] = nn.Linear(in_features=model.classifier[1].in_features, out_features=MAP_TO_CLASSES)
 
-print(cuda.is_available())
-if cuda.is_available(): model.to('cuda:0')
+# print(cuda.is_available())
+# if cuda.is_available(): model.to('cuda:0')
+
+device = get_device()
+print(device)
+model.to(device)
 
 # define folder to save model and log file
 check_mkdir(FOLDER, is_dir=True)
@@ -97,8 +102,8 @@ n_60 = int(.6*N)
 n_20 = int(.2*N)
 
 rand_indeces = np.random.permutation(N)
-train_indeces = rand_indeces[:n_80]
-valid_indeces = rand_indeces[n_80:]
+train_indeces = rand_indeces[:n_60]
+valid_indeces = rand_indeces[n_60:]
 #valid_indeces = rand_indeces[n_60:n_60+n_20]
 #test_indeces = rand_indeces[n_60+n_20:]
 
@@ -203,3 +208,4 @@ with open('var_log.csv', 'a') as f:
         ""
     ])
 f.close()
+
