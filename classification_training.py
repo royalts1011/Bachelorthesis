@@ -47,7 +47,7 @@ def accuracy(y_pred, y_true):
 
 # %%
 # influences learning rate, weight decay, data folder path and training classes
-IS_OWN_DATASET = False
+IS_OWN_DATASET = True
 
 # define constants
 LEARNING_RATE = (0.001, 0.0001)[IS_OWN_DATASET] # FORM: (AMI, dataset)
@@ -166,17 +166,17 @@ training = pt_training.Training(
         early_stopping=early_stopping
     )
 
-training(EPOCHS)
+# training(EPOCHS)
 
 
 # %%
-with open(log_file, 'r') as file:
-    log = json.load(file)
+# with open(log_file, 'r') as file:
+#     log = json.load(file)
 
-plt.plot(log['acc'], label='acc')
-plt.plot(log['val_acc'], label='val_acc')
-plt.legend()
-plt.grid()
+# plt.plot(log['acc'], label='acc')
+# plt.plot(log['val_acc'], label='val_acc')
+# plt.legend()
+# plt.grid()
 
 
 # %%
@@ -216,7 +216,9 @@ plt.grid()
 test = TestMyModel(dl_test)
 
 test.load_model()
-# test.begin_testing()
+test.start_testing()
+test.class_acc()
+
 
 
 # %%
