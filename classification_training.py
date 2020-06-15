@@ -47,7 +47,7 @@ def accuracy(y_pred, y_true):
 
 # %%
 # influences learning rate, weight decay, data folder path and training classes
-IS_OWN_DATASET = True
+IS_OWN_DATASET = False
 
 # define constants
 LEARNING_RATE = (0.001, 0.0001)[IS_OWN_DATASET] # FORM: (AMI, dataset)
@@ -166,7 +166,7 @@ training = pt_training.Training(
         early_stopping=early_stopping
     )
 
-# training(EPOCHS)
+training(EPOCHS)
 
 
 # %%

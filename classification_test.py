@@ -106,7 +106,8 @@ class TestMyModel:
         # print accuracies of the classes
         for i in range( len(classes) ):
             try:
-                print('Accuracy of {:>15} : {:<3} %'.format(
-                    classes[i], 100 * class_correct[i] / class_total[i]))
+                total = 'Number of images: ' + str(int(class_total[i]))
+                print('Accuracy of {:>15} : {:>6.2f} % \t{:>22}'.format(
+                    classes[i], 100 * class_correct[i] / class_total[i], total))
             except ZeroDivisionError:
                 print('Accuracy of {:>15} : {:<3}'.format(classes[i], "None") )
