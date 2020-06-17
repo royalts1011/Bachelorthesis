@@ -13,10 +13,10 @@ while True:
     ret, img = cap.read()
     # flip video frame horizontally as webcams take mirror image
     img = cv2.flip(img, 1) 
-    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     ears = earCascade.detectMultiScale(
-        img,
+        grey,
         scaleFactor=1.1,
         minNeighbors=5,     
         minSize=(20, 20)

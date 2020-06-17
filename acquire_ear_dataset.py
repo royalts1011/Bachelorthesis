@@ -1,6 +1,7 @@
 import cv2
 import os
 from os.path import join, dirname, exists
+import time
 
 #########################################################################
 # SET PARAMETERS
@@ -46,6 +47,7 @@ def rescale_frame(frame, percent=75):
 def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, is_authentification=False):
 
     cap = cv2.VideoCapture(0)
+    time.sleep(2.0)
     # open window dimensions
     make_720(cap)
 
@@ -73,7 +75,8 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
         ret, frame = cap.read()
         # flip video frame horizontally to show it "mirror-like"
         frame = cv2.flip(frame, 1)
-        rects = ear_detector.detectMultiScale(frame, 1.1, 5)
+        grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        rects = ear_detector.detectMultiScale(grey, 1.1, 5)
 
         for (x,y,w,h) in rects:
             # bounding box will be bigger by increasing the scaling
