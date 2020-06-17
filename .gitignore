@@ -7,7 +7,9 @@
 .DS_Store
 .vscode/
 .vscode/settings.json
+settings.json
 .idea/
 __pycache__/
+class_sample/*
 *.png
 model.pt
