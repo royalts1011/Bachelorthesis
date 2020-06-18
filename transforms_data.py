@@ -29,7 +29,7 @@ def transforms_train(img_shape):
 def transforms_valid_and_test(img_shape):
     transformations = transforms.Compose([
         transforms.Resize(img_shape),
-        transforms.Lambda(lambda x: x.convert('RGB')),
+        # transforms.Lambda(lambda x: x.convert('RGB')),
         transforms.ToTensor(),
         normalize
         ])
@@ -41,3 +41,20 @@ def transforms_siamese(img_shape):
         transforms.ToTensor()
         ])
     return transformations
+
+class UnNormalize(object):
+    def __init__(self):
+        self.mean = norm_mean
+        self.std = norm_std
+
+    def __call__(self, tensor):
+        """
+        Args:
+            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
+        Returns:
+            Tensor: Normalized image.
+        """
+        for t, m, s in zip(tensor, self.mean, self.std):
+            t.mul_(s).add_(m)
+            # The normalize code -> t.sub_(m).div_(s)
+        return tensor
