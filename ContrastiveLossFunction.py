@@ -1,8 +1,8 @@
-import torch.nn.functional as NNF
+from torch.autograd import Variable
 import torch.nn as nn
+import torch.nn.functional as NNF
 from torch import optim
 import torch
-from torch.autograd import Variable
 import numpy as np
 class ContrastiveLoss(torch.nn.Module):
     """
