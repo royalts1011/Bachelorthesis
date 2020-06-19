@@ -6,7 +6,7 @@ import torch
 import PIL.ImageOps  
 class SiameseNetworkDataset(Dataset):
     
-    def __init__(self,imageFolderDataset,transform=None,should_invert=True):
+    def __init__(self, imageFolderDataset, transform=None, should_invert=True):
         self.imageFolderDataset = imageFolderDataset    
         self.transform = transform
         self.should_invert = should_invert
@@ -31,8 +31,8 @@ class SiameseNetworkDataset(Dataset):
 
         img0 = Image.open(img0_tuple[0])
         img1 = Image.open(img1_tuple[0])
-        img0 = img0.convert("L")
-        img1 = img1.convert("L")
+        # img0 = img0.convert("L")
+        # img1 = img1.convert("L")
         
         if self.should_invert:
             img0 = PIL.ImageOps.invert(img0)
