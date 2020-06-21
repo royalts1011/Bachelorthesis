@@ -121,6 +121,23 @@ counter, loss_history = training(Config.EPOCHS)
 #show_plot(counter, loss_history)
 
 
+
+unnormalize = td.UnNormalize()
+dataiter = iter(test_dataloader)
+for i in range(10):
+    x0,x1,label = next(dataiter)
+    concatenated = torch.cat((unnormalize(x0), unnormalize(x1)),0)
+    if cuda.is_available():
+        output1 = model(Variable(x0).cuda())
+        output2 = model(Variable(x1).cuda())
+    else:
+        output1 = model(Variable(x0))
+        output2 = model(Variable(x1))
+    euclidean_distance = F.pairwise_distance(output1, output2)
+    #imshow(make_grid(concatenated),'Dissimilarity: {:.2f}'.format(euclidean_distance.item()))
+    print(euclidean_distance.item())
+    print(label)
+
 # # %%
 # unnormalize = td.UnNormalize()
 # # Takes first image from the first batch of the test_dataloader and compares it via euclidean distance
