@@ -1,3 +1,4 @@
+
 # %%
 import sys
 sys.path.append('../..')
@@ -37,6 +38,8 @@ def show_plot(iteration,loss):
 # Set Up All Configurations here
 class Config():
     dataset_dir = '../AMIC/'
+    # training_dir = "../data/ears/training/"
+    # testing_dir = "../data/ears/testing/"
     train_batch_size = 32
     test_batch_size = 1
     vis_batch_size = 8
@@ -55,8 +58,8 @@ n_70 = int(round(.7*N))
 n_60 = int(round(.6*N))
 
 rand_indices = np.random.permutation(N)
-train_indices = rand_indices[:n_70]
-test_indices = rand_indices[n_70:]
+train_indices = rand_indices[:n_80]
+test_indices = rand_indices[n_80:]
 
 # definde data loader
 # dl_train = ds_ear_siamese.get_dataloader(
@@ -77,20 +80,17 @@ test_dataloader = ds_ear_siamese.get_dataloader(
     data_path=Config.dataset_dir
 )
 
-
-
-
-# # %%
-# # visualize some data....
-
 # vis_dataloader = ds_ear_siamese.get_dataloader(
 #         indices=train_indices,
 #         batch_size=Config.vis_batch_size,
 #         num_workers=Config.num_workers,
-#         transform_mode='valid_and_test',
+#         transform_mode='train',
 #         data_path=Config.dataset_dir
 # )
 
+
+# %%
+# visualize some data....
 # dataiter = iter(vis_dataloader)
 
 # example_batch = next(dataiter)
@@ -121,26 +121,25 @@ counter, loss_history = training(Config.EPOCHS)
 #show_plot(counter, loss_history)
 
 
-# %%
-unnormalize = td.UnNormalize()
-# Takes first image from the first batch of the test_dataloader and compares it via euclidean distance
-# to the second entry images of the next ten batches (batch size is 1 here)
-dataiter = iter(test_dataloader)
-x0,_,_ = next(dataiter)
-x0_unnormalized = unnormalize(x0)
-for i in range(10):
-    _,x1,label2 = next(dataiter)
-    concatenated = torch.cat((x0_unnormalized, unnormalize(x1)),0)
+# # %%
+# unnormalize = td.UnNormalize()
+# # Takes first image from the first batch of the test_dataloader and compares it via euclidean distance
+# # to the second entry images of the next ten batches (batch size is 1 here)
+# dataiter = iter(test_dataloader)
+# x0,_,_ = next(dataiter)
+# x0_unnormalized = unnormalize(x0)
+# for i in range(10):
+#     _,x1,label2 = next(dataiter)
+#     concatenated = torch.cat((x0_unnormalized, unnormalize(x1)),0)
     
-    if cuda.is_available():
-        output1 = model(Variable(x0).cuda())
-        output2 = model(Variable(x1).cuda())
-    else:
-        output1 = model(Variable(x0))
-        output2 = model(Variable(x1))
-    euclidean_distance = F.pairwise_distance(output1, output2)
-    print('Dissimilarity: ' + euclidean_distance)
-    #imshow(make_grid(concatenated),'Dissimilarity: {:.2f}'.format(euclidean_distance.item()))
+#     if cuda.is_available():
+#         output1 = model(Variable(x0).cuda())
+#         output2 = model(Variable(x1).cuda())
+#     else:
+#         output1 = model(Variable(x0))
+#         output2 = model(Variable(x1))
+#     euclidean_distance = F.pairwise_distance(output1, output2)
+#     imshow(make_grid(concatenated),'Dissimilarity: {:.2f}'.format(euclidean_distance.item()))
 
 
 # %%
