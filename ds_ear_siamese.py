@@ -8,7 +8,7 @@ from siamese_network_dataset import SiameseNetworkDataset
 
 
 DATA_FOLDER = '../AMIC'
-RESIZE_BIG = (280, 230)
+RESIZE_BIG = (224, 224)
 RESIZE_SMALL = (100, 100)
 
 # dictionary to access different transformation methods

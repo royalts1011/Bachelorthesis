@@ -24,15 +24,14 @@ class SiameseNetworkDataset(Dataset):
         else:
             while True:
                 #keep looping till a different class image is found
-                
                 img1_tuple = random.choice(self.imageFolderDataset.imgs) 
                 if img0_tuple[1] !=img1_tuple[1]:
                     break
 
         img0 = Image.open(img0_tuple[0])
         img1 = Image.open(img1_tuple[0])
-        # img0 = img0.convert("L")
-        # img1 = img1.convert("L")
+        img0 = img0.convert("L")
+        img1 = img1.convert("L")
         
         if self.should_invert:
             img0 = PIL.ImageOps.invert(img0)

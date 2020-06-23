@@ -20,9 +20,10 @@ def transforms_train(img_shape):
         #MyTransforms.GaussianBlur(p=0.2, max_radius=4),
         MyTransforms.AddGaussianNoise(blend_alpha_range=(0., 0.15)),
         transforms.ColorJitter(brightness=0.2, contrast=0.4, saturation=0.2, hue=0.02),
-        # transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        normalize
+        #transforms.RandomHorizontalFlip(),
+        transforms.Grayscale(3),
+        transforms.ToTensor()
+        #normalize
         ])
     return transformations
 
@@ -30,13 +31,18 @@ def transforms_valid_and_test(img_shape):
     transformations = transforms.Compose([
         transforms.Resize(img_shape),
         # transforms.Lambda(lambda x: x.convert('RGB')),
-        transforms.ToTensor(),
-        normalize
+        transforms.Grayscale(3),
+        transforms.ToTensor()
+        #normalize
         ])
     return transformations
 
 def transforms_siamese(img_shape):
     transformations = transforms.Compose([
+        MyTransforms.RandomScaleWithMaxSize(img_shape, 0.8),
+        transforms.RandomAffine(degrees=15),
+        MyTransforms.MyRandomCrop(crop_ratio=0.1, b_keep_aspect_ratio=True),
+        transforms.ColorJitter(brightness=0.2, contrast=0.4, saturation=0.2, hue=0.02),
         transforms.Resize(img_shape),
         transforms.ToTensor()
         ])

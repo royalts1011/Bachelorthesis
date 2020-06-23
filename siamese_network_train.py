@@ -22,8 +22,10 @@ class Training():
                 else: 
                     img0, img1 , label = img0, img1 , label
                 self.optimizer.zero_grad()
+                #NEED TO BE CHANGED FOR MOBILENET
                 output1 = self.model(img0)
-                output2 = self.model(img1)
+                output2 = self.model(img1)                 
+                # output1,output2 = self.model(img0,img1)
                 loss_contrastive = self.loss_contrastive(output1,output2,label)
                 loss_contrastive.backward()
                 self.optimizer.step()
