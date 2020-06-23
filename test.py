@@ -136,7 +136,7 @@ def generate_output( img_in, img_in2):
     if cuda.is_available():
         return model(Variable(img_in).cuda(), Variable(img_in2).cuda())
     else:
-        return model(Variable(img_in))
+        return model(Variable(img_in),Variable(img_in2))
 
 # Output for Mobilenet
 # def generate_output( img_in):
@@ -183,6 +183,7 @@ for m, n in zip(matches, non_matches):
     print(fmt_id.format('Acc. count: '), '{:>.0f}'.format(accuracy_count), '\n')
 
 # divide by the minimum length (zip function regulated the steps to the minimum)
+print(min(len(matches), len(non_matches)))
 print(fmt_id.format('Overall (estimated) accuracy: '), fmt_eucl.format(accuracy_count / min(len(matches), len(non_matches)) ), ' %')
 
 
