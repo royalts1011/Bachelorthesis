@@ -5,6 +5,7 @@ from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 from siamese_network_dataset import SiameseNetworkDataset
+from siamese_verification_dataset import SiameseVerificationDataset
 
 
 DATA_FOLDER = '../AMIC'
@@ -64,3 +65,18 @@ def get_siamese_dataset(data_path=DATA_FOLDER, transform_mode = 'siamese', shoul
                         should_invert=False)
     
     return siamese_dataset
+
+def get_verification_dataset(new_images_path, dataset_path, folder_comparison, transform_mode = 'siamese', should_invert = False ):
+    # the newly taken images of the person
+    new_img_dset = torchvision.datasets.ImageFolder( root = new_images_path )
+    general_dataset = torchvision.datasets.ImageFolder( root = dataset_path )
+
+    # uses custom dataset class to create a siamese dataset
+    verification_dataset = SiameseNetworkDataset(
+                        newimageDataset = new_img_dset,
+                        generalDataset = general_dataset,
+                        folder_comparison = folder_comparison,
+                        transform = transform_dict[transform_mode], # applies transformation on images
+                        should_invert=False)
+    
+    return verification_dataset
