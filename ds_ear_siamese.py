@@ -6,7 +6,6 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 from siamese_network_dataset import SiameseNetworkDataset
 
-
 DATA_FOLDER = '../AMIC'
 RESIZE_BIG = (224, 224)
 RESIZE_SMALL = (100, 100)

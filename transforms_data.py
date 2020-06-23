@@ -11,7 +11,7 @@ normalize = transforms.Normalize( mean=norm_mean, std=norm_std )
 
 def transforms_train(img_shape):
     mean_pil = tuple([int(x*255) for x in norm_mean])
-    transformations = transforms.Compose([
+    return transforms.Compose([
         MyTransforms.RandomScaleWithMaxSize(img_shape, 0.8),
         MyTransforms.PadToSize(img_shape, mean_pil),
         transforms.RandomAffine(degrees=15, fillcolor=mean_pil),
@@ -25,20 +25,18 @@ def transforms_train(img_shape):
         transforms.ToTensor()
         #normalize
         ])
-    return transformations
 
 def transforms_valid_and_test(img_shape):
-    transformations = transforms.Compose([
+    return transforms.Compose([
         transforms.Resize(img_shape),
         # transforms.Lambda(lambda x: x.convert('RGB')),
         transforms.Grayscale(3),
         transforms.ToTensor()
         #normalize
         ])
-    return transformations
 
 def transforms_siamese(img_shape):
-    transformations = transforms.Compose([
+    return transforms.Compose([
         MyTransforms.RandomScaleWithMaxSize(img_shape, 0.8),
         transforms.RandomAffine(degrees=15),
         MyTransforms.MyRandomCrop(crop_ratio=0.1, b_keep_aspect_ratio=True),
@@ -46,7 +44,12 @@ def transforms_siamese(img_shape):
         transforms.Resize(img_shape),
         transforms.ToTensor()
         ])
-    return transformations
+
+def transforms_siamese_verification( img_shape ):
+        return transforms.Compose([
+            transforms.Resize(img_shape),
+            transforms.ToTensor()
+            ])
 
 class UnNormalize(object):
     def __init__(self):
