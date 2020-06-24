@@ -7,14 +7,12 @@ from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 from siamese_network_dataset import SiameseNetworkDataset
 
 DATA_FOLDER = '../AMIC'
-RESIZE_BIG = (224, 224)
-RESIZE_SMALL = (100, 100)
 
 # dictionary to access different transformation methods
 transform_dict = {
-    'train': td.transforms_train( RESIZE_BIG ),
-    'valid_and_test': td.transforms_valid_and_test( RESIZE_BIG ),
-    'siamese' : td.transforms_siamese( RESIZE_SMALL ),
+    'train': td.transforms_train( td.get_resize(small=False) ),
+    'valid_and_test': td.transforms_valid_and_test( td.get_resize(small=False) ),
+    'siamese' : td.transforms_siamese( td.get_resize(small=True) ),
     'size_only' : None
 }
 
