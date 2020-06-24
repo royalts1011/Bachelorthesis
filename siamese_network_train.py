@@ -1,14 +1,16 @@
 from torch import cuda
 class Training():
     def __init__(
-        self,model, optimizer, train_dataloader, loss_contrastive, test_dataloader=None, save_path=None
+        self,model, optimizer, train_dataloader, loss_contrastive, nn_Siamese, test_dataloader=None, save_path=None, 
     ):
         self.model = model
         self.optimizer = optimizer
         self.loss_contrastive = loss_contrastive
         self.train_dataloader = train_dataloader
+        self.nn_Siamese = nn_Siamese
         self.test_dataloader = test_dataloader
         self.save_path = save_path
+
 
     def __call__(self, epochs_):
         counter = []
@@ -22,10 +24,11 @@ class Training():
                 else: 
                     img0, img1 , label = img0, img1 , label
                 self.optimizer.zero_grad()
-                #NEED TO BE CHANGED FOR MOBILENET
-                output1 = self.model(img0)
-                output2 = self.model(img1)                 
-                # output1,output2 = self.model(img0,img1)
+                if self.nn_Siamese == False:
+                    output1 = self.model(img0)
+                    output2 = self.model(img1)
+                else:                 
+                    output1,output2 = self.model(img0,img1)
                 loss_contrastive = self.loss_contrastive(output1,output2,label)
                 loss_contrastive.backward()
                 self.optimizer.step()
