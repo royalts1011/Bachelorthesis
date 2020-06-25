@@ -6,7 +6,6 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 from siamese_network_dataset import SiameseNetworkDataset
 
-DATA_FOLDER = '../AMIC'
 
 # dictionary to access different transformation methods
 transform_dict = {
@@ -17,41 +16,21 @@ transform_dict = {
 }
 
 
-def get_dataloader(indices=None, batch_size=32, num_workers=0, transform_mode = 'train', data_path=DATA_FOLDER, should_invert = False):
-
+def get_siam_dataloader(data_path, batch_size=32, num_workers=0, transform_mode = 'train', should_invert = False):
+    # get the specific siamese dataset
     siam_dset = get_siamese_dataset(data_path, transform_mode, should_invert)
 
-    if indices is None:
-        data_loader = DataLoader(
-            siam_dset,
-            batch_size=batch_size,
-            shuffle=True,
-            num_workers=num_workers
-        )
-    else:
-        data_loader = DataLoader(
-            siam_dset,
-            batch_size=batch_size,
-            shuffle=False,
-            num_workers=num_workers,
-            sampler=SubsetRandomSampler(indices)
-        )
+    data_loader = DataLoader(
+        siam_dset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers
+    )
     return data_loader
 
 
-def get_dataset(data_path=DATA_FOLDER, transform_mode = 'size_only'):
-    
-    # create dataset with dict transformation
-    dataset = torchvision.datasets.ImageFolder(
-                    root = data_path,
-                    transform=transform_dict[transform_mode]
-                    ) 
 
-    print(dataset.classes)
-    return dataset
-
-def get_siamese_dataset(data_path=DATA_FOLDER, transform_mode = 'siamese', should_invert = False ):
-
+def get_siamese_dataset(data_path, transform_mode = 'siamese', should_invert = False ):
     # loads dataset from disk
     dataset = torchvision.datasets.ImageFolder( root = data_path )
     # uses custom dataset class to create a siamese dataset
