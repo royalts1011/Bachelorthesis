@@ -5,13 +5,16 @@ from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 
-DATA_FOLDER = '../dataset'
-RESIZE_Y = 280
-RESIZE_X = 230
+# dictionary to access different transformation methods
+transform_dict = {
+    'train': td.transforms_train( td.get_resize(small=False) ),
+    'valid_and_test': td.transforms_valid_and_test( td.get_resize(small=False) ),
+    'size_only' : None
+}
 
-def get_dataloader(indices=None, batch_size=32, num_workers=0, is_train = True, data_path=DATA_FOLDER):
+def get_dataloader(data_path, indices=None, batch_size=32, num_workers=0, transform_mode='train'):
 
-    dataset = get_dataset(data_path, is_train)
+    dataset = get_dataset(data_path, transform_mode)
 
     if indices is None:
         data_loader = DataLoader(
@@ -31,16 +34,11 @@ def get_dataloader(indices=None, batch_size=32, num_workers=0, is_train = True, 
     return data_loader
 
 
-def get_dataset(data_path=DATA_FOLDER, is_train=False):
-
-    transform_dict = {
-        'train': td.transforms_train( (RESIZE_Y, RESIZE_X) ),
-        'valid_and_test': td.transforms_valid_and_test( (RESIZE_Y, RESIZE_X) )
-    }
+def get_dataset(data_path, transform_mode):
     
     dataset = torchvision.datasets.ImageFolder(
                     root = data_path,
-                    transform=transform_dict['train' if is_train else 'valid_and_test']
+                    transform=transform_dict[transform_mode]
                     ) 
 
     print(dataset.classes)
