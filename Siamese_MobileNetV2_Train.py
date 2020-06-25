@@ -22,18 +22,18 @@ from NN_Siamese import SiameseNetwork
 
 
 # %%
-def imshow(img,text=None,should_save=False):
-    npimg = img.numpy()
-    plt.axis("off")
-    if text:
-        plt.text(75, 8, text, style='italic',fontweight='bold',
-            bbox={'facecolor':'white', 'alpha':0.8, 'pad':10})
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    plt.show()    
+# def imshow(img,text=None,should_save=False):
+#     npimg = img.numpy()
+#     plt.axis("off")
+#     if text:
+#         plt.text(75, 8, text, style='italic',fontweight='bold',
+#             bbox={'facecolor':'white', 'alpha':0.8, 'pad':10})
+#     plt.imshow(np.transpose(npimg, (1, 2, 0)))
+#     plt.show()    
 
-def show_plot(iteration,loss):
-    plt.plot(iteration,loss)
-    plt.show()
+# def show_plot(iteration,loss):
+#     plt.plot(iteration,loss)
+#     plt.show()
 
 
 # %%
@@ -48,7 +48,7 @@ class Config():
     vis_batch_size = 8
     num_workers = 3
     
-    EPOCHS= 100
+    EPOCHS= 10
     LEARNINGRATE = 0.001
     WEIGHT_DECAY = 1
 
@@ -86,24 +86,24 @@ test_dataloader = ds_ear_siamese.get_dataloader(
     should_invert = False
 )
 
-vis_dataloader = ds_ear_siamese.get_dataloader(
-    data_path=Config.dataset_dir,
-    indices=train_indices,
-    batch_size=Config.vis_batch_size,
-    num_workers=Config.num_workers,
-    transform_mode='siamese',
-    should_invert = False
-)
+# vis_dataloader = ds_ear_siamese.get_dataloader(
+#     data_path=Config.dataset_dir,
+#     indices=train_indices,
+#     batch_size=Config.vis_batch_size,
+#     num_workers=Config.num_workers,
+#     transform_mode='siamese',
+#     should_invert = False
+# )
 
 
 # %%
 # visualize some data....
-dataiter = iter(vis_dataloader)
+# dataiter = iter(vis_dataloader)
 
-example_batch = next(dataiter)
-concatenated = torch.cat((example_batch[0], example_batch[1]),0)
-imshow(make_grid(concatenated))
-print(example_batch[2].numpy())
+# example_batch = next(dataiter)
+# concatenated = torch.cat((example_batch[0], example_batch[1]),0)
+# imshow(make_grid(concatenated))
+# print(example_batch[2].numpy())
 
 
 # %%
@@ -128,7 +128,7 @@ device = get_device()
 print(device)
 model.to(device)
 
-contrastive_loss_siamese = ContrastiveLoss(2.0)
+contrastive_loss_siamese = ContrastiveLoss()
 optimizer_siamese = torch.optim.Adam(model.parameters(),lr = Config.LEARNINGRATE)
 
 
@@ -137,7 +137,7 @@ training = Training(model=model, optimizer=optimizer_siamese,train_dataloader=tr
                 loss_contrastive=contrastive_loss_siamese, nn_Siamese=Config.NN_SIAMESE)
 
 counter, loss_history = training(Config.EPOCHS)
-show_plot(counter, loss_history)
+# show_plot(counter, loss_history)
 
 
 # %%
@@ -203,7 +203,7 @@ print(fmt_id.format('Overall (estimated) accuracy: '), fmt_eucl.format( 100 * ac
 
 
 # %%
-#torch.save(model,'/nfshome/lentzsch/Documents/Bachelorarbeit/Bachelorthesis/models/model_NN_1.pt')
+torch.save(model,'/nfshome/lentzsch/Documents/Bachelorarbeit/Bachelorthesis/models/model.pt')
 
 
 # %%
