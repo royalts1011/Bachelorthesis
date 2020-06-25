@@ -6,8 +6,6 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 from siamese_network_dataset import SiameseNetworkDataset
 
-DATA_FOLDER = '../AMIC'
-
 # dictionary to access different transformation methods
 transform_dict = {
     'train': td.transforms_train( td.get_resize(small=False) ),
@@ -17,29 +15,24 @@ transform_dict = {
 }
 
 
-def get_dataloader(indices=None, batch_size=32, num_workers=0, transform_mode = 'train', data_path=DATA_FOLDER, should_invert = False):
+def get_dataloader(data_path, indices=None, batch_size=32, num_workers=0, transform_mode = 'train', should_invert = False):
 
-    siam_dset = get_siamese_dataset(data_path, transform_mode, should_invert)
+    # indices limit the range that images are randomly picked from
+    siam_dset = get_siam_dataset(data_path, indices, transform_mode, should_invert)
 
-    if indices is None:
-        data_loader = DataLoader(
-            siam_dset,
-            batch_size=batch_size,
-            shuffle=True,
-            num_workers=num_workers
-        )
-    else:
-        data_loader = DataLoader(
-            siam_dset,
-            batch_size=batch_size,
-            shuffle=False,
-            num_workers=num_workers,
-            sampler=SubsetRandomSampler(indices)
-        )
+    # load the data into batches
+    data_loader = DataLoader(
+        siam_dset,
+        batch_size=batch_size,
+        # reshuffle after every epoch
+        shuffle=True,
+        num_workers=num_workers
+    )
+  
     return data_loader
 
 
-def get_dataset(data_path=DATA_FOLDER, transform_mode = 'size_only'):
+def get_dataset(data_path, transform_mode = 'size_only'):
     
     # create dataset with dict transformation
     dataset = torchvision.datasets.ImageFolder(
@@ -50,14 +43,18 @@ def get_dataset(data_path=DATA_FOLDER, transform_mode = 'size_only'):
     print(dataset.classes)
     return dataset
 
-def get_siamese_dataset(data_path=DATA_FOLDER, transform_mode = 'siamese', should_invert = False ):
+def get_siam_dataset(data_path, indices, transform_mode, should_invert):
 
     # loads dataset from disk
-    dataset = torchvision.datasets.ImageFolder( root = data_path )
+    dataset = torchvision.datasets.ImageFolder( 
+                    root = data_path
+                    )
+
     # uses custom dataset class to create a siamese dataset
     siamese_dataset = SiameseNetworkDataset(
                         imageFolderDataset = dataset,
-                        transform = transform_dict[transform_mode], # applies transformation on images
-                        should_invert=False)
+                        indices=indices,
+                        transform=transform_dict[transform_mode],
+                        should_invert=should_invert)
     
     return siamese_dataset
