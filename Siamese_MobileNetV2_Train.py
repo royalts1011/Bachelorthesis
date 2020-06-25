@@ -39,7 +39,7 @@ from NN_Siamese import SiameseNetwork
 # %%
 # Set Up All Configurations here
 class Config():
-    NN_SIAMESE = True
+    NN_SIAMESE = False
     dataset_dir = '../dataset_low_res/'
     # training_dir = "../data/ears/training/"
     # testing_dir = "../data/ears/testing/"
@@ -48,8 +48,8 @@ class Config():
     vis_batch_size = 8
     num_workers = 3
     
-    EPOCHS= 2
-    LEARNINGRATE = 0.0005
+    EPOCHS= 100
+    LEARNINGRATE = 0.001
     WEIGHT_DECAY = 1
 
 
