@@ -22,18 +22,18 @@ from NN_Siamese import SiameseNetwork
 
 
 # %%
-# def imshow(img,text=None,should_save=False):
-#     npimg = img.numpy()
-#     plt.axis("off")
-#     if text:
-#         plt.text(75, 8, text, style='italic',fontweight='bold',
-#             bbox={'facecolor':'white', 'alpha':0.8, 'pad':10})
-#     plt.imshow(np.transpose(npimg, (1, 2, 0)))
-#     plt.show()    
+def imshow(img,text=None,should_save=False):
+    npimg = img.numpy()
+    plt.axis("off")
+    if text:
+        plt.text(75, 8, text, style='italic',fontweight='bold',
+            bbox={'facecolor':'white', 'alpha':0.8, 'pad':10})
+    plt.imshow(np.transpose(npimg, (1, 2, 0)))
+    plt.show()    
 
-# def show_plot(iteration,loss):
-#     plt.plot(iteration,loss)
-#     plt.show()
+def show_plot(iteration,loss):
+    plt.plot(iteration,loss)
+    plt.show()
 
 
 # %%
@@ -68,39 +68,42 @@ test_indices = rand_indices[n_70:]
 # definde data loader
 # dl_train = ds_ear_siamese.get_dataloader(
 train_dataloader = ds_ear_siamese.get_dataloader(
+    data_path=Config.dataset_dir,
     indices=train_indices,
     batch_size=Config.train_batch_size,
     num_workers=Config.num_workers,
-    transform_mode='siamese', # TODO switch to another transform? 
-    data_path=Config.dataset_dir
+    transform_mode='siamese', # TODO switch to another transform?
+    should_invert = False
 )
 
 # dl_test = ds_ear_siamese.get_dataloader(
 test_dataloader = ds_ear_siamese.get_dataloader(
+    data_path=Config.dataset_dir,
     indices=test_indices,
     batch_size=Config.test_batch_size,
     num_workers=Config.num_workers,
     transform_mode='siamese',
-    data_path=Config.dataset_dir
+    should_invert = False
 )
 
-# vis_dataloader = ds_ear_siamese.get_dataloader(
-#     indices=train_indices,
-#     batch_size=Config.vis_batch_size,
-#     num_workers=Config.num_workers,
-#     transform_mode='siamese',
-#     data_path=Config.dataset_dir
-# )
+vis_dataloader = ds_ear_siamese.get_dataloader(
+    data_path=Config.dataset_dir,
+    indices=train_indices,
+    batch_size=Config.vis_batch_size,
+    num_workers=Config.num_workers,
+    transform_mode='siamese',
+    should_invert = False
+)
 
 
 # %%
 # visualize some data....
-# dataiter = iter(vis_dataloader)
+dataiter = iter(vis_dataloader)
 
-# example_batch = next(dataiter)
-# concatenated = torch.cat((example_batch[0], example_batch[1]),0)
-# imshow(make_grid(concatenated))
-# print(example_batch[2].numpy())
+example_batch = next(dataiter)
+concatenated = torch.cat((example_batch[0], example_batch[1]),0)
+imshow(make_grid(concatenated))
+print(example_batch[2].numpy())
 
 
 # %%
@@ -125,7 +128,7 @@ device = get_device()
 print(device)
 model.to(device)
 
-contrastive_loss_siamese = ContrastiveLoss()
+contrastive_loss_siamese = ContrastiveLoss(2.0)
 optimizer_siamese = torch.optim.Adam(model.parameters(),lr = Config.LEARNINGRATE)
 
 
@@ -134,7 +137,7 @@ training = Training(model=model, optimizer=optimizer_siamese,train_dataloader=tr
                 loss_contrastive=contrastive_loss_siamese, nn_Siamese=Config.NN_SIAMESE)
 
 counter, loss_history = training(Config.EPOCHS)
-#show_plot(counter, loss_history)
+show_plot(counter, loss_history)
 
 
 # %%
@@ -186,15 +189,23 @@ for m, n in zip(matches, non_matches):
     fmt_eucl = '{:<.3f}'
     # increase accouracy count if p-p was lower than p-n
     if(euclidean_distance_pp < euclidean_distance_pn): accuracy_count += 1
-
     # print current stats
     print(fmt_id.format('pos-pos: '), fmt_eucl.format( euclidean_distance_pp.item()) )
     print(fmt_id.format('pos-neg: '),fmt_eucl.format( euclidean_distance_pn.item()) )
     print(fmt_id.format('Acc. count: '), '{:>.0f}'.format(accuracy_count), '\n')
 
 # divide by the minimum length (zip function regulated the steps to the minimum)
-print(fmt_id.format('Overall (estimated) accuracy: '), fmt_eucl.format(accuracy_count / min(len(matches), len(non_matches)) ), ' %')
+print(fmt_id.format('Overall (estimated) accuracy: '), fmt_eucl.format( 100 * accuracy_count / min(len(matches), len(non_matches)) ), ' %')
 
 
 # %%
-torch.save(model,'/nfshome/lentzsch/Documents/Bachelorarbeit/Bachelorthesis/models/model.pt')
+#model = torch.load('/Users/falcolentzsch/Develope/Bachelorthesis/Bachelorthesis/models/model.pt')
+
+
+# %%
+#torch.save(model,'/nfshome/lentzsch/Documents/Bachelorarbeit/Bachelorthesis/models/model_NN_1.pt')
+
+
+# %%
+
+
