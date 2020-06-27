@@ -48,9 +48,9 @@ class Config():
     vis_batch_size = 8
     num_workers = 3
     
-    EPOCHS= 10
+    EPOCHS= 100
     LEARNINGRATE = 0.001
-    WEIGHT_DECAY = 1
+    WEIGHT_DECAY = 0
 
 
 # %%
