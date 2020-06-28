@@ -4,56 +4,57 @@ from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
+from siamese_network_dataset import SiameseNetworkDataset
 
-DATA_FOLDER = '../dataset'
-RESIZE_Y = 280
-RESIZE_X = 230
+# dictionary to access different transformation methods
+transform_dict = {
+    'train': td.transforms_train( td.get_resize(small=False) ),
+    'valid_and_test': td.transforms_valid_and_test( td.get_resize(small=False) ),
+    'siamese' : td.transforms_siamese( td.get_resize(small=True) ),
+    'size_only' : None
+}
 
-def get_dataloader(indeces=None, batch_size=32, num_workers=0, is_train = True, data_path=DATA_FOLDER):
 
-    dataset = get_dataset(data_path, is_train)
+def get_dataloader(data_path, indices=None, batch_size=32, num_workers=0, transform_mode = 'train', should_invert = False):
 
-    if indeces is None:
-        data_loader = DataLoader(
-            dataset,
-            batch_size=batch_size,
-            shuffle=False,
-            num_workers=num_workers
-        )
-    else:
-        data_loader = DataLoader(
-            dataset,
-            batch_size=batch_size,
-            shuffle=False,
-            num_workers=num_workers,
-            sampler=SubsetRandomSampler(indeces)
-        )
+    # indices limit the range that images are randomly picked from
+    siam_dset = get_siam_dataset(data_path, indices, transform_mode, should_invert)
+
+    # load the data into batches
+    data_loader = DataLoader(
+        siam_dset,
+        batch_size=batch_size,
+        # reshuffle after every epoch
+        shuffle=True,
+        num_workers=num_workers
+    )
+  
     return data_loader
 
 
-def get_dataset(data_path=DATA_FOLDER, is_train=False):
-
-    transform_dict = {
-        'train': td.transforms_train(
-                    (RESIZE_Y, RESIZE_X),
-                    # [0.49139968, 0.48215841, 0.44653091],
-                    [0.485, 0.456, 0.406], # imageNet mean
-                    # [0.24703223, 0.24348513, 0.26158784]
-                    [0.229, 0.224, 0.225] # imageNet std
-                    ),
-        'valid_and_test': td.transforms_valid_and_test(
-                    (RESIZE_Y, RESIZE_X),
-                    # [0.49139968, 0.48215841, 0.44653091],
-                    [0.485, 0.456, 0.406], # imageNet mean
-                    # [0.24703223, 0.24348513, 0.26158784]
-                    [0.229, 0.224, 0.225] # imageNet std
-                    )
-        }
+def get_dataset(data_path, transform_mode = 'size_only'):
     
+    # create dataset with dict transformation
     dataset = torchvision.datasets.ImageFolder(
                     root = data_path,
-                    transform=transform_dict['train' if is_train else 'valid_and_test']
+                    transform=transform_dict[transform_mode]
                     ) 
 
     print(dataset.classes)
     return dataset
+
+def get_siam_dataset(data_path, indices, transform_mode, should_invert):
+
+    # loads dataset from disk
+    dataset = torchvision.datasets.ImageFolder( 
+                    root = data_path
+                    )
+
+    # uses custom dataset class to create a siamese dataset
+    siamese_dataset = SiameseNetworkDataset(
+                        imageFolderDataset = dataset,
+                        indices=indices,
+                        transform=transform_dict[transform_mode],
+                        should_invert=should_invert)
+    
+    return siamese_dataset
