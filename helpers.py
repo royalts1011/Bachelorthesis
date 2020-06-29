@@ -13,15 +13,22 @@ def print_list(list_):
     for i, name in enumerate(list_):
         print(fmt.format(i, name))
 
+# prints two lists next to each other
+def print_predictions(list_left, list_right):
+    fmt = '{:<20} {:<10}'
+    print(fmt.format('Name', 'Value'))
+    for l, r in zip(list_left, list_right):
+        print(fmt.format(l, r))
+
 # removes .DS_Store string from a list
 def rm_DSStore(list_):
     return list(filter(('.DS_Store').__ne__, list_))
 
-def type_conversion(self, object):
+def type_conversion(obj):
     if cuda.is_available():
-        return object.type('torch.cuda.FloatTensor')
+        return obj.type('torch.cuda.FloatTensor')
     else:
-        return object.type('torch.FloatTensor')
+        return obj.type('torch.FloatTensor')
 
 # takes a path input and shows all folders
 # Let's user choose a folder by index

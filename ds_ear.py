@@ -41,5 +41,4 @@ def get_dataset(data_path, transform_mode):
                     transform=transform_dict[transform_mode]
                     ) 
 
-    print(dataset.classes)
     return dataset
