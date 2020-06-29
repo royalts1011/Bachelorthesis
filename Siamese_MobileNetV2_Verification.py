@@ -35,13 +35,13 @@ class Config():
 
     DATASET_DIR = '../dataset_low_res/'
     VERIFICATION_DIR = '../auth_dataset/unknown-auth'
-    MODEL_DIR = './models/model_MN_1.pt'
+    MODEL_DIR = './models/model_MN_100%.pt'
 
     RESIZE_SMALL = True
 
     TRESHOLD = 3.0
-    TRESHOLD_VER = 1.0
-    a = 0.1
+    TRESHOLD_VER = 0.8
+    a = 0
 
 model = torch.load(Config.MODEL_DIR, Config.DEVICE) 
 
@@ -144,7 +144,7 @@ for t in triplet_list:
 
     euclidean_distance_pp = F.pairwise_distance(match_out1, match_out2)
     #euclidean_distance_pn = F.pairwise_distance(non_match_out1, non_match_out2)
-    if(euclidean_distance_pp >= Config.TRESHOLD): continue
+    #if(euclidean_distance_pp >= Config.TRESHOLD): continue
     
     #if(euclidean_distance_pp + Config.a < euclidean_distance_pn): verification_counter += 1
     if(euclidean_distance_pp + Config.a < Config.TRESHOLD_VER): verification_counter += 1
