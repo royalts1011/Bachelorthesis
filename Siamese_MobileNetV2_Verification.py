@@ -38,6 +38,9 @@ class Config():
 
     RESIZE_SMALL = True
 
+    TRESHOLD = 3.0
+    a = 0.1
+
 model = torch.load(Config.MODEL_DIR, Config.DEVICE) 
 
 
@@ -124,7 +127,6 @@ triplet_list = get_triplets(dataset_path=Config.DATASET_DIR,
 # %%
 verification_counter = 0
 #Scaling factor
-a = 0.1
 for t in triplet_list:
     if Config.NN_SIAMESE == True:
         match_out1, match_out2 = generate_output(t[0], t[1])
@@ -137,8 +139,9 @@ for t in triplet_list:
 
     euclidean_distance_pp = F.pairwise_distance(match_out1, match_out2)
     euclidean_distance_pn = F.pairwise_distance(non_match_out1, non_match_out2)
-
-    if(euclidean_distance_pp + a < euclidean_distance_pn): verification_counter += 1
+    if(euclidean_distance_pp < Config.TRESHOLD or euclidean_distance_pn < Config.TRESHOLD): continue
+    
+    if(euclidean_distance_pp + Config.a < euclidean_distance_pn): verification_counter += 1
 
     # format variables
     fmt_id = '{:<12}'
