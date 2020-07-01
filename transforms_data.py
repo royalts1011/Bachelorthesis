@@ -9,9 +9,15 @@ norm_std=[0.229, 0.224, 0.225] # imageNet std
 
 normalize = transforms.Normalize( mean=norm_mean, std=norm_std )
 
+# Returns boolean decision of small or bigger
+def get_resize(small):
+    if small: return 150, 100
+    else: return 280, 230
+
+
 def transforms_train(img_shape):
     mean_pil = tuple([int(x*255) for x in norm_mean])
-    transformations = transforms.Compose([
+    return transforms.Compose([
         MyTransforms.RandomScaleWithMaxSize(img_shape, 0.8),
         MyTransforms.PadToSize(img_shape, mean_pil),
         transforms.RandomAffine(degrees=15, fillcolor=mean_pil),
@@ -24,13 +30,28 @@ def transforms_train(img_shape):
         transforms.ToTensor(),
         normalize
         ])
-    return transformations
 
 def transforms_valid_and_test(img_shape):
-    transformations = transforms.Compose([
+    return transforms.Compose([
         transforms.Resize(img_shape),
         transforms.Lambda(lambda x: x.convert('RGB')),
         transforms.ToTensor(),
         normalize
         ])
-    return transformations
+
+class UnNormalize(object):
+    def __init__(self):
+        self.mean = norm_mean
+        self.std = norm_std
+
+    def __call__(self, tensor):
+        """
+        Args:
+            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
+        Returns:
+            Tensor: Normalized image.
+        """
+        for t, m, s in zip(tensor, self.mean, self.std):
+            t.mul_(s).add_(m)
+            # The normalize code -> t.sub_(m).div_(s)
+        return tensor

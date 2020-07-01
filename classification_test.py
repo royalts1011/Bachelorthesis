@@ -5,41 +5,32 @@ import numpy as np
 import transforms_data as td
 from PIL import Image
 import glob
-from torch import cuda
-import acquire_ear_dataset as a
 import os
 import shutil
-from DLBio.pytorch_helpers import get_device
 from pickle import UnpicklingError
+
+# PyTorch
+from torch import cuda
 import torchvision
+
+# DLBio and own scripts
+import helpers
+import acquire_ear_dataset as a
+from DLBio.pytorch_helpers import get_device
 
 class TestMyModel:
 
     DEVICE = get_device()
-    PATH_TO_MODELS = './class_sample/'
 
-    def __init__(self, data_loader_test):
+    def __init__(self, data_loader_test, path_to_models):
         self.dl_test = data_loader_test
         self.CATEGORIES = data_loader_test.dataset.classes
+        self.PATH_TO_MODELS = path_to_models
         # CATEGORIES.sort()
 
-    # method for displaying files with index
-    def print_list(self, list_):
-        fmt = '{:<8}{:<20}'
-        print(fmt.format('Index', 'Name'))
-        for i, name in enumerate(list_):
-            print(fmt.format(i, name))
-
-    def type_conversion(self, object):
-        if cuda.is_available():
-            return object.type('torch.cuda.FloatTensor')
-        else:
-            return object.type('torch.FloatTensor')
-
-
     def load_model(self):
-        models = os.listdir(self.PATH_TO_MODELS)
-        self.print_list(models)
+        models = helpers.rm_DSStore( os.listdir(self.PATH_TO_MODELS) )
+        helpers.print_list(models)
         # Handle the user's input for the model to load
         while True:
             idx = input('Choose the model by index: ')
@@ -56,7 +47,6 @@ class TestMyModel:
         # Load model
         print('Loading ', models[idx], ' ...')
         self.model = torch.load(os.path.join(self.PATH_TO_MODELS, models[idx]), self.DEVICE)
-
         
         # print(self.model.eval())
 
@@ -70,8 +60,8 @@ class TestMyModel:
             for data in self.dl_test:
                 images, labels = data
                 # convert to correct type
-                images = self.type_conversion(images)
-                labels = self.type_conversion(labels)
+                images = helpers.type_conversion(images)
+                labels = helpers.type_conversion(labels)
                 # continue prediction
                 outputs = self.model(images)
                 _, predicted = torch.max(outputs.data, 1)
@@ -90,8 +80,8 @@ class TestMyModel:
             for data in self.dl_test:
                 images, labels = data
                 # convert to correct type
-                images = self.type_conversion(images)
-                labels = self.type_conversion(labels)
+                images = helpers.type_conversion(images)
+                labels = helpers.type_conversion(labels)
                 # continue prediction
                 outputs = self.model(images)
                 _, predicted = torch.max(outputs, 1)

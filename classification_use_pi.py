@@ -1,20 +1,25 @@
 activate = '/home/pi/.virtualenvs/Bachelorthesis/bin/activate_this.py'
 exec(open(activate).read(),{'__file__': activate})
 
-# %%
+
 import sys
 sys.path.append('../..')
 sys.path.append('/home/pi/Documents/Bachelorarbeit/')
-import torch
 import numpy as np
-import transforms_data as td
 from PIL import Image
 import glob
-from time import sleep
-from torch import cuda
-import acquire_ear_dataset as a
 import os
 import shutil
+from time import sleep
+
+# Pytorch
+import torch
+from torch import cuda
+
+# DLBio and own scripts
+import transforms_data as td
+import ds_ear
+import acquire_ear_dataset as a
 from DLBio.pytorch_helpers import get_device
 
 # Pin imports
@@ -24,14 +29,13 @@ from Adafruit_CharLCD import Adafruit_CharLCD
 
 
 
-
+DATASET_DIR = '../dataset_low_res/'
+CATEGORIES = ds_ear.get_dataset(DATASET_DIR, transform_mode='size_only').classes
 #CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
-CATEGORIES = ["falco_len", "nils_loo", "alissa_buh", "gregor_spi"]
+# CATEGORIES = ["falco_len", "nils_loo", "alissa_buh", "gregor_spi"]
 CATEGORIES.sort()
 AUTHORIZED = ["falco_len"]
-RESIZE_Y = 280
-RESIZE_X = 230
-DATA_TEST_FOLDER = "../auth_dataset/unknown-auth/*png"
+DATA_TEST_DIR = "../auth_dataset/unknown-auth/*png"
 DEVICE = get_device()
 
 model = torch.load('./class_sample/model.pt', DEVICE)
@@ -66,15 +70,20 @@ try:
 
     # %%
     image_array = []
-    files = glob.glob (DATA_TEST_FOLDER)
+    files = glob.glob (DATA_TEST_DIR)
     files.sort()
     # declare function of transformation
-    preprocess = td.transforms_valid_and_test((RESIZE_Y, RESIZE_X),[0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    preprocess = td.transforms_valid_and_test( td.get_resize(small=False) )
 
     for f in files:
         image = Image.open(f)
         image_transformed = preprocess(image)
-        image_transformed = image_transformed.reshape(-1, RESIZE_Y, RESIZE_X, 1)
+        image_transformed = image_transformed.reshape(
+                                -1,
+                                td.get_resize(small=Config.RESIZE_SMALL)[0],
+                                td.get_resize(small=Config.RESIZE_SMALL)[1],
+                                1
+                                )
         image_transformed = image_transformed.permute(3, 0, 1, 2)
         if cuda.is_available():
             image_array.append(image_transformed.type('torch.cuda.FloatTensor'))
@@ -102,12 +111,12 @@ try:
     print(summ_pred)
 
 
-    NUMBER_AUTHORIZED = int(.3*len(image_array))
+    num_authorized = int(.3*len(image_array))
     authentification_dict = {CATEGORIES[i]:all_classes.count(i) for i in all_classes}
     print(authentification_dict) 
     access = False
     for a in authentification_dict:
-        if a in AUTHORIZED and summ_pred[0][CATEGORIES.index(a)]>= NUMBER_AUTHORIZED:
+        if a in AUTHORIZED and summ_pred[0][CATEGORIES.index(a)]>= num_authorized:
             
             # LCD output
             lcd.clear()
