@@ -1,6 +1,8 @@
 from torch import cuda
 import torch.nn.functional as NNF
 from metrics import accuracy
+from helpers import cuda_conv
+
 class Training():
     def __init__(
         self,model, optimizer, train_dataloader, loss_contrastive, nn_Siamese, val_dataloader, THRESHOLD
@@ -29,19 +31,13 @@ class Training():
 
         for epoch in range(0,epochs_):
             for i, data in enumerate(self.train_dataloader):
-                img0, img1 , label = data
-                if cuda.is_available():
-                    img0, img1 , label = img0.cuda(), img1.cuda() , label.cuda()
-                else: 
-                    img0, img1 , label = img0, img1 , label
+                # clear gradients from last step
                 self.optimizer.zero_grad()
-                if self.nn_Siamese == False:
-                    output1 = self.model(img0)
-                    output2 = self.model(img1)
-                else:                 
-                    output1,output2 = self.model(img0,img1)
+
+                label, output1, output2 = self.get_label_outputs(batch=data)
 
                 loss_contrastive = self.loss_contrastive(output1,output2,label)
+                # backpropagation
                 loss_contrastive.backward()
                 self.optimizer.step()
                 
@@ -54,14 +50,8 @@ class Training():
                     acc_history.append(acc)
 
             for i, data in enumerate(self.val_dataloader):
-                img0, img1 , label = data
-                if cuda.is_available():
-                    img0, img1 , label = img0.cuda(), img1.cuda() , label.cuda()
-                    output1 = self.model(img0)
-                    output2 = self.model(img1)
-                else: 
-                    img0, img1 , label = img0, img1 , label
-                    output1,output2 = self.model(img0,img1)
+
+                label, output1, output2 = self.get_label_outputs(batch=data)
 
                 loss_contrastive = self.loss_contrastive(output1,output2,label)
 
@@ -75,3 +65,36 @@ class Training():
 
 
         return counter, loss_history, val_counter, val_loss_history, acc_history, val_acc_history
+    
+
+ 
+    def get_label_outputs(self, batch):
+        """Extract batch images and process through model
+
+        Parameters
+        ----------
+        batch : current batch
+
+        Returns
+        -------
+        label, output1, output2
+            binary label being same (0) or different (1)
+            outputs processed through model
+        """
+        # get all images and labels
+        img0, img1 , label = batch
+        # Type conversion
+        img0, img1 , label = cuda_conv(img0), cuda_conv(img1), cuda_conv(label)
+        # if cuda.is_available():
+        #     img0, img1 , label = img0.cuda(), img1.cuda() , label.cuda()
+        # else: 
+        #     img0, img1 , label = img0, img1 , label
+
+        # Throw in correct network
+        if self.nn_Siamese == True:
+            output1, output2 = self.model(img0,img1)
+        else:                 
+            output1 = self.model(img0)
+            output2 = self.model(img1)
+        
+        return label, output1, output2
