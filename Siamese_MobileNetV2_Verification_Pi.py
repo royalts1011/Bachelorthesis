@@ -8,7 +8,7 @@ import glob
 import shutil
 import os
 from os.path import join
-import time
+from time import sleep
 
 # PyTorch imports
 import torch
@@ -181,7 +181,7 @@ try:
 
     # LCD output
     lcd.clear()
-    entry_string = 'Hi ' + a
+    entry_string = 'Hi ' + pers_to_ver
     lcd.message('Access granted\n'+ entry_string)
     
     # scroll through whole text until its gone
