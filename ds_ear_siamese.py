@@ -8,7 +8,7 @@ from siamese_network_dataset import SiameseNetworkDataset
 
 # dictionary to access different transformation methods
 transform_dict = {
-    'train': td.transforms_train( td.get_resize(small=False) ),
+    'train': td.transforms_train(td.get_resize(small=False) ),
     'valid_and_test': td.transforms_valid_and_test( td.get_resize(small=False) ),
     'siamese' : td.transforms_siamese( td.get_resize(small=True) ),
     'siamese_valid_and_test' : td.transforms_siamese_verification( td.get_resize(small=True) ),
