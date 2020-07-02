@@ -1,5 +1,3 @@
-# To add a new cell, type '# %%'
-# To add a new markdown cell, type '# %% [markdown]'
 # %%
 # math and system imports
 import sys
@@ -10,6 +8,7 @@ import glob
 import shutil
 import os
 from os.path import join
+import time
 
 # PyTorch imports
 import torch
@@ -28,15 +27,19 @@ from DLBio.pytorch_helpers import get_device
 # %%
 # central variable hub
 class Config():
-    NN_SIAMESE = True
+    NN_SIAMESE = False
     AUTHORIZED = ["falco_len","konrad_von"]
     DEVICE = get_device()
 
     DATASET_DIR = '../dataset_low_res/'
     VERIFICATION_DIR = '../auth_dataset/unknown-auth'
-    MODEL_DIR = './models/model_NN_1.pt'
+    MODEL_DIR = './models/model_MN_100%.pt'
 
     RESIZE_SMALL = True
+
+    TRESHOLD = 3.0
+    TRESHOLD_VER = 0.8
+    a = 0
 
 model = torch.load(Config.MODEL_DIR, Config.DEVICE) 
 
@@ -116,6 +119,9 @@ def get_triplets(dataset_path, user_name, verif_dataset):
 # %%
 # pers_to_ver = input('\n Enter name end press <return> ==>  ')
 pers_to_ver = helpers.choose_folder(Config.DATASET_DIR)
+
+start_time = time.time()
+
 triplet_list = get_triplets(dataset_path=Config.DATASET_DIR,
                             user_name=pers_to_ver,
                             verif_dataset=Config.VERIFICATION_DIR)
@@ -124,27 +130,28 @@ triplet_list = get_triplets(dataset_path=Config.DATASET_DIR,
 # %%
 verification_counter = 0
 #Scaling factor
-a = 0.1
 for t in triplet_list:
     if Config.NN_SIAMESE == True:
         match_out1, match_out2 = generate_output(t[0], t[1])
-        non_match_out1, non_match_out2 = generate_output(t[0], t[2])
+        #non_match_out1, non_match_out2 = generate_output(t[0], t[2])
     else:
         match_out1 = generate_output(t[0])
         match_out2 = generate_output(t[1])                 
-        non_match_out1 = generate_output(t[0])
-        non_match_out2 = generate_output(t[2])
+        #non_match_out1 = generate_output(t[0])
+        #non_match_out2 = generate_output(t[2])
 
     euclidean_distance_pp = F.pairwise_distance(match_out1, match_out2)
-    euclidean_distance_pn = F.pairwise_distance(non_match_out1, non_match_out2)
-
-    if(euclidean_distance_pp + a < euclidean_distance_pn): verification_counter += 1
+    #euclidean_distance_pn = F.pairwise_distance(non_match_out1, non_match_out2)
+    #if(euclidean_distance_pp >= Config.TRESHOLD): continue
+    
+    #if(euclidean_distance_pp + Config.a < euclidean_distance_pn): verification_counter += 1
+    if(euclidean_distance_pp + Config.a < Config.TRESHOLD_VER): verification_counter += 1
 
     # format variables
     fmt_id = '{:<12}'
     fmt_eucl = '{:<.3f}'
     print(fmt_id.format('pos-pos: '), fmt_eucl.format( euclidean_distance_pp.item()) )
-    print(fmt_id.format('pos-neg: '),fmt_eucl.format( euclidean_distance_pn.item()) )
+    #print(fmt_id.format('pos-neg: '),fmt_eucl.format( euclidean_distance_pn.item()) )
     print(fmt_id.format('Acc. count: '), '{:>.0f}'.format(verification_counter), '\n')
 
 
@@ -158,4 +165,4 @@ else:
 
 # %%
 shutil.rmtree('../auth_dataset/unknown-auth')
-
+print(time.time() - start_time)
