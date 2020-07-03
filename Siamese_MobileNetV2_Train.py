@@ -48,15 +48,16 @@ class Config():
     vis_batch_size = 8
     num_workers = 3
     
-    EPOCHS= 10
+    EPOCHS= 50
     LEARNINGRATE = 0.001
-    WEIGHT_DECAY = 1
+    WEIGHT_DECAY = 0
 
 
 # %%
 # define indicies to split Data
 N = len(ds_ear_siamese.get_dataset(data_path=Config.dataset_dir, transform_mode='size_only'))
 print(N)
+n_90 = int(round(.9*N))
 n_80 = int(round(.8*N))
 n_70 = int(round(.7*N))
 n_60 = int(round(.6*N))

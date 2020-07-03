@@ -4,6 +4,7 @@
 ###################################################
 ###################################################
 import os
+from torch import cuda
 
 # method for displaying files with index
 def print_list(list_):
@@ -40,3 +41,9 @@ def choose_folder(dataset_path, name='unknown'):
     assert folder_name in folders, 'The name was not found in the given folder: ' + dataset_path
     return folder_name
 
+# converts to cuda if possible
+def cuda_conv(obj):
+    if cuda.is_available():
+        return obj.cuda()
+    else:
+        return obj
