@@ -137,9 +137,10 @@ try:
     # Bilder aufnehmen
     led_yellow.blink(on_time=0.5,off_time=0.25)
     a.capture_ear_images(amount_pic=12, pic_per_stage=12, is_authentification=True)
-    # Die ersten
-    #os.remove('../auth_dataset/unknown-auth/unknown001.png')
-    #os.remove('../auth_dataset/unknown-auth/unknown002.png')  
+    
+    # Die ersten Bilder entfernen, da häufig verschwommen
+    os.remove('../auth_dataset/unknown-auth/unknown001.png')
+    os.remove('../auth_dataset/unknown-auth/unknown002.png')  
 
     led_yellow.off()
 
