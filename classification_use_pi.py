@@ -18,6 +18,7 @@ from torch import cuda
 
 # DLBio and own scripts
 import transforms_data as td
+import helpers as hp
 import ds_ear
 import acquire_ear_dataset as a
 from DLBio.pytorch_helpers import get_device
@@ -29,16 +30,28 @@ from Adafruit_CharLCD import Adafruit_CharLCD
 
 
 
-DATASET_DIR = '../dataset_low_res/'
-CATEGORIES = ds_ear.get_dataset(DATASET_DIR, transform_mode='size_only').classes
-#CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
-# CATEGORIES = ["falco_len", "nils_loo", "alissa_buh", "gregor_spi"]
-CATEGORIES.sort()
-AUTHORIZED = ["falco_len"]
-DATA_TEST_DIR = "../auth_dataset/unknown-auth/*png"
-DEVICE = get_device()
+# DATASET_DIR = '../dataset_low_res/'
+# CATEGORIES = ds_ear.get_dataset(DATASET_DIR, transform_mode='size_only').classes
+# #CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
+# # CATEGORIES = ["falco_len", "nils_loo", "alissa_buh", "gregor_spi"]
+# CATEGORIES.sort()
+# AUTHORIZED = ["falco_len"]
+# DATA_TEST_DIR = "../auth_dataset/unknown-auth/*png"
+# DEVICE = get_device()
 
-model = torch.load('./class_sample/model.pt', DEVICE)
+class Config():
+    DATASET_DIR = '../dataset_low_res/'
+    CATEGORIES = ds_ear.get_dataset(DATASET_DIR, transform_mode='size_only').classes
+    # CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
+    CATEGORIES.sort()
+    AUTHORIZED = ["falco_len","konrad_von"]
+    DATA_TEST_DIR = "../auth_dataset/unknown-auth/*png"
+    DEVICE = get_device()
+    RESIZE_SMALL = False
+
+
+
+model = torch.load('./class_sample/model.pt', Config.DEVICE)
 
 # instantiate lcd and specify pins
 lcd = Adafruit_CharLCD(rs=26, en=19,
@@ -70,10 +83,10 @@ try:
 
     # %%
     image_array = []
-    files = glob.glob (DATA_TEST_DIR)
+    files = glob.glob (Config.DATA_TEST_DIR)
     files.sort()
     # declare function of transformation
-    preprocess = td.transforms_valid_and_test( td.get_resize(small=False) )
+    preprocess = td.transforms_valid_and_test( td.get_resize(small=Config.RESIZE_SMALL) )
 
     for f in files:
         image = Image.open(f)
@@ -85,10 +98,12 @@ try:
                                 1
                                 )
         image_transformed = image_transformed.permute(3, 0, 1, 2)
-        if cuda.is_available():
-            image_array.append(image_transformed.type('torch.cuda.FloatTensor'))
-        else:
-            image_array.append(image_transformed.type('torch.FloatTensor'))
+        
+        image_array.append( hp.type_conversion(image_transformed) )
+#         if cuda.is_available():
+#             image_array.append(image_transformed.type('torch.cuda.FloatTensor'))
+#         else:
+#             image_array.append(image_transformed.type('torch.FloatTensor'))
 
 
     # %%
@@ -100,23 +115,35 @@ try:
             pred = torch.softmax(pred, 1)
             pred = pred.cpu().numpy()
             summ_pred = summ_pred + pred
+            
+        hp.print_predictions(Config.CATEGORIES,pred[0])
+        class_ = np.argmax(pred, 1)
+        all_classes.append(class_[0])
 
-        classes = np.argmax(pred, 1)
-        all_classes.append(classes[0])
-
-        pred = np.append(pred, classes)
-        pred = np.append(pred, CATEGORIES[classes[0]])  
-        print(pred, "\n")
-    print(all_classes)
-    print(summ_pred)
+        print('Highest value: ', Config.CATEGORIES[class_[0]], '\n')
+#         pred = np.append(pred, class_)
+#         pred = np.append(pred, Config.CATEGORIES[class_[0]])  
+#         print(pred, "\n")
+#     print(all_classes)
+#     print(summ_pred)
+    print('\n'*2, '#'*40)
+    print('Accumulated predictions:')
+    hp.print_predictions(
+            [Config.CATEGORIES[c] for c in all_classes],
+            list(summ_pred[0])
+            )
 
 
     num_authorized = int(.3*len(image_array))
-    authentification_dict = {CATEGORIES[i]:all_classes.count(i) for i in all_classes}
-    print(authentification_dict) 
+    authentification_dict = {Config.CATEGORIES[i]:all_classes.count(i) for i in all_classes}
+    print('\nFrequency of prediction:')
+    fmt = '{:<20} {:<4}'
+    for key, value in authentification_dict.items():
+        print(fmt.format(key, value))
+
     access = False
     for a in authentification_dict:
-        if a in AUTHORIZED and summ_pred[0][CATEGORIES.index(a)]>= num_authorized:
+        if a in Config.AUTHORIZED and summ_pred[0][Config.CATEGORIES.index(a)]>= num_authorized:
             
             # LCD output
             lcd.clear()
@@ -133,7 +160,7 @@ try:
                 lcd.home()
                 lcd.message('Access granted -\nWelcome!')
             
-            print("Access granted! Welcome "  + a + "!")
+            print("\n\t~~~ Access granted! Welcome "  + a + "! ~~~")
             led_green.on()
             sleep(10)
             led_green.off()
@@ -145,7 +172,7 @@ try:
         lcd.clear()
         lcd.message('Access denied -\nNo entry.')
 
-        print("Access Denied")
+        print("\n\t~~~ Access denied ~~~")
         led_red.on()
         sleep(10)
         led_red.off()
