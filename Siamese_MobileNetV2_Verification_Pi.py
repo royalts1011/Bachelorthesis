@@ -139,9 +139,10 @@ try:
     a.capture_ear_images(amount_pic=10, pic_per_stage=10, is_authentification=True)
     led_yellow.off()
 
+
     # LCD output
     lcd.clear()
-    lcd.message('Authentication\nin progress...')
+    lcd.message('Please chosse\nyour name...')
 
 
     pers_to_ver = helpers.choose_folder(Config.DATASET_DIR)
@@ -150,6 +151,9 @@ try:
                             user_name=pers_to_ver,
                             verif_dataset=Config.VERIFICATION_DIR)
 
+    # LCD output
+    lcd.clear()
+    lcd.message('Authentication\nin progress...')
 
     verification_counter = 0
     for t in triplet_list:
