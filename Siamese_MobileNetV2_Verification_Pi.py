@@ -1,3 +1,5 @@
+activate = '/home/pi/.virtualenvs/Bachelorthesis/bin/activate_this.py'
+exec(open(activate).read(),{'__file__': activate})
 # %%
 # math and system imports
 import sys
@@ -184,21 +186,22 @@ try:
     entry_string = 'Hi ' + pers_to_ver
     lcd.message('Access granted\n'+ entry_string)
     
-    # scroll through whole text until its gone
-    if(len(entry_string)>16):            
-        sleep(2)
-        # scroll text on display
-        for x in range(entry_string):
-            lcd.move_left()
-            sleep(.5)
-        lcd.home()
-        lcd.message('Access granted -\nWelcome!')
-    
-    print("Access granted! Welcome "  + pers_to_ver + "!")
-    led_green.on()
-    sleep(10)
-    led_green.off()
-    access = True
+    if  pers_to_ver in Config.AUTHORIZED and verification_counter >= NUMBER_AUTHORIZED:
+        # scroll through whole text until its gone
+        if(len(entry_string)>16):            
+            sleep(2)
+            # scroll text on display
+            for x in range(entry_string):
+                lcd.move_left()
+                sleep(.5)
+            lcd.home()
+            lcd.message('Access granted -\nWelcome!')
+        
+        print("Access granted! Welcome "  + pers_to_ver + "!")
+        led_green.on()
+        sleep(10)
+        led_green.off()
+        access = True
     
     if not access:
         # LCD output
