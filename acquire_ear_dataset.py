@@ -1,6 +1,7 @@
 import cv2
 import os
 from os.path import join, dirname, exists
+import time
 
 #########################################################################
 # SET PARAMETERS
@@ -46,6 +47,7 @@ def rescale_frame(frame, percent=75):
 def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, is_authentification=False):
 
     cap = cv2.VideoCapture(0)
+    time.sleep(2.0)
     # open window dimensions
     make_720(cap)
 

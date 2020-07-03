@@ -58,7 +58,7 @@ class Training():
                 if i %20 == 0 :
                     val_acc = accuracy(output1, output2, label, self.THRESHOLD)
                     print("Epoch number {}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch,loss_contrastive.item(), val_acc))
-                    val_iteration_number +=20
+                    val_iteration_number +=50
                     val_counter.append(val_iteration_number)
                     val_loss_history.append(loss_contrastive.item())
                     val_acc_history.append(val_acc)

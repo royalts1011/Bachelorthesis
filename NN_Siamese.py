@@ -22,7 +22,7 @@ class SiameseNetwork(nn.Module):
         )
 
         self.fc1 = nn.Sequential(
-            nn.Linear(8*100*100, 500),
+            nn.Linear(8*150*100, 500),
             nn.ReLU(inplace=True),
 
             nn.Linear(500, 500),
