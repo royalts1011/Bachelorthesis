@@ -13,7 +13,7 @@ normalize = transforms.Normalize( mean=norm_mean, std=norm_std )
 # Returns boolean decision of small or bigger
 def get_resize(small):
     if small: return 150, 100
-    else: return 224, 224
+    else: return 280, 230
 
 
 def transforms_train(img_shape):
