@@ -136,13 +136,17 @@ try:
 
     # Bilder aufnehmen
     led_yellow.blink(on_time=0.5,off_time=0.25)
-    a.capture_ear_images(amount_pic=10, pic_per_stage=10, is_authentification=True)
+    a.capture_ear_images(amount_pic=12, pic_per_stage=12, is_authentification=True)
+    # Die ersten
+    #os.remove('../auth_dataset/unknown-auth/unknown001.png')
+    #os.remove('../auth_dataset/unknown-auth/unknown002.png')  
+
     led_yellow.off()
 
 
     # LCD output
     lcd.clear()
-    lcd.message('Please chosse\nyour name...')
+    lcd.message('Please choose\nyour name...')
 
 
     pers_to_ver = helpers.choose_folder(Config.DATASET_DIR)
@@ -153,7 +157,7 @@ try:
 
     # LCD output
     lcd.clear()
-    lcd.message('Authentication\nin progress...')
+    lcd.message('Verification\nin progress...')
 
     verification_counter = 0
     for t in triplet_list:
