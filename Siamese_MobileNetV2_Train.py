@@ -259,8 +259,8 @@ for t in threshholds:
     print("Threshold: ", t , "  Matrix: ", cf)
     _,_,_,sensitivity,specificity = M.get_metrics(cf)
 
-    tprs.extend(sensitivity)
-    fprs.extend( (1 - specificity) )
+    tprs.append(sensitivity)
+    fprs.append( (1 - specificity) )
 
 print("\n TPRS:\t", tprs)
 print(" FPRS:\t", fprs)
