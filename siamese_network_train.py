@@ -17,19 +17,21 @@ class Training():
 
 
     def __call__(self, epochs_):
-        counter = []
+
         loss_history = []
-        iteration_number = 0
         acc_history = []
-
-
-        val_counter = []
         val_loss_history = []
-        val_iteration_number = 0
         val_acc_history = []
+        epochs = []
 
 
         for epoch in range(0,epochs_):
+            acc_loss_counter = 0.0
+            val_acc_loss_counter = 0.0
+            acc = 0.0
+            loss = 0.0
+            val_acc = 0.0
+            val_loss = 0.0
             for i, data in enumerate(self.train_dataloader):
                 # clear gradients from last step
                 self.optimizer.zero_grad()
@@ -40,14 +42,16 @@ class Training():
                 # backpropagation
                 loss_contrastive.backward()
                 self.optimizer.step()
-                
-                if i %10 == 0:
-                    acc = accuracy(output1, output2, label, self.THRESHOLD)
-                    print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n".format(epoch,loss_contrastive.item(), acc))
-                    iteration_number +=10
-                    counter.append(iteration_number)
-                    loss_history.append(loss_contrastive.item())
-                    acc_history.append(acc)
+
+                acc += accuracy(output1, output2, label, self.THRESHOLD)
+                loss += loss_contrastive.item()
+                acc_loss_counter += 1
+            
+            acc = acc/acc_loss_counter
+            loss = loss/acc_loss_counter
+            acc_history.append(acc)
+            loss_history.append(loss)
+            print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n".format(epoch,loss, acc))
 
             for i, data in enumerate(self.val_dataloader):
 
@@ -55,16 +59,18 @@ class Training():
 
                 loss_contrastive = self.loss_contrastive(output1,output2,label)
 
-                if i %20 == 0 :
-                    val_acc = accuracy(output1, output2, label, self.THRESHOLD)
-                    print("Epoch number {}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch,loss_contrastive.item(), val_acc))
-                    val_iteration_number +=50
-                    val_counter.append(val_iteration_number)
-                    val_loss_history.append(loss_contrastive.item())
-                    val_acc_history.append(val_acc)
+                val_acc += accuracy(output1, output2, label, self.THRESHOLD)
+                val_loss += loss_contrastive.item()
+                val_acc_loss_counter += 1
+            
+            val_acc = val_acc/val_acc_loss_counter
+            val_loss = val_loss/val_acc_loss_counter
+            val_acc_history.append(val_acc)
+            val_loss_history.append(val_loss)
+            print("Epoch number {}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch,val_loss, val_acc))
 
-
-        return counter, loss_history, val_counter, val_loss_history, acc_history, val_acc_history
+            epochs.append(epoch)
+        return epochs, loss_history, val_loss_history, acc_history, val_acc_history
     
 
  
