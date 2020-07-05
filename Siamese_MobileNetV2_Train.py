@@ -251,12 +251,12 @@ categories = ['Same', 'Different']
 tprs = []
 fprs = []
 # Set all Thresholds to be tested
-threshholds = np.arange(start=0.0, stop=1.2, step=0.1)
+threshholds = [x / 10 for x in list(range(1,12))]
 
 for t in threshholds:
     ground_truth, prediction = calc_test_label(t)
     cf = M.cf_matrix(ground_truth, prediction)
-    print(cf)
+    print("Threshold: ", t , "  Matrix: ", cf)
     _,_,_,sensitivity,specificity = M.get_metrics(cf)
 
     tprs.extend(sensitivity)
