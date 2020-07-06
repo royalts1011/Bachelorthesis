@@ -26,7 +26,7 @@ def get_dataloader(data_path, indices=None, batch_size=32, num_workers=0, transf
         siam_dset,
         batch_size=batch_size,
         # reshuffle after every epoch
-        shuffle=True,
+        shuffle=False,
         num_workers=num_workers
     )
   

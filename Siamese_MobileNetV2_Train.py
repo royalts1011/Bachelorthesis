@@ -61,7 +61,7 @@ class Config():
     vis_batch_size = 8
     num_workers = 3
     
-    EPOCHS= 5
+    EPOCHS= 30
     LEARNINGRATE = 0.001
     WEIGHT_DECAY = 0
 
@@ -71,18 +71,37 @@ class Config():
 
 # %%
 # define indicies to split Data
-N = len(ds_ear_siamese.get_dataset(data_path=Config.dataset_dir, transform_mode='size_only'))
+dset = ds_ear_siamese.get_dataset(data_path=Config.dataset_dir, transform_mode='size_only')
+N = len(dset)
 print(N)
-n_80 = int(round(.8*N))
-n_70 = int(round(.7*N))
-n_60 = int(round(.6*N))
-n_20 = int(round(.2*N))
-n_10 = int(round(.1*N))
 
-rand_indices = np.random.permutation(N)
-train_indices = rand_indices[:n_70]
-val_indices = rand_indices[n_70:n_70+n_20]
-test_indices = rand_indices[n_70+n_20:]
+# List of index where classes switch
+class_switch = [0]
+for c in range(len(dset.classes)):
+    for i,(_, class_idx) in enumerate(dset.imgs):
+        if class_idx > c:
+            class_switch.append(i)
+            break
+# append last index
+class_switch.append(len(dset.imgs)-1)
+
+train_indices, val_indices, test_indices = [],[],[]
+
+for i in range(len(class_switch)-1):
+    rand_class = np.random.permutation(list(range(class_switch[i], class_switch[i+1])))
+    n_80 = int(round(.8*len(rand_class)))
+    n_70 = int(round(.7*len(rand_class)))
+    n_60 = int(round(.6*len(rand_class)))
+    n_20 = int(round(.2*len(rand_class)))
+    n_10 = int(round(.1*len(rand_class)))
+    train_indices.extend(rand_class[:n_70])
+    val_indices.extend(rand_class[n_70:n_70+n_20])
+    test_indices.extend(rand_class[n_70+n_20:])
+
+# rand_indices = np.random.permutation(N)
+# train_indices = rand_indices[:n_70]
+# val_indices = rand_indices[n_70:n_70+n_20]
+# test_indices = rand_indices[n_70+n_20:]
 
 
 # definde data loader
@@ -259,8 +278,8 @@ for t in threshholds:
     print("Threshold: ", t , "  Matrix: ", cf)
     _,_,_,sensitivity,specificity = M.get_metrics(cf)
 
-    tprs.extend(sensitivity)
-    fprs.extend( (1 - specificity) )
+    tprs.append(sensitivity)
+    fprs.append( (1 - specificity) )
 
 print("\n TPRS:\t", tprs)
 print(" FPRS:\t", fprs)
