@@ -80,28 +80,28 @@ class_switch = [0]
 for c in range(len(dset.classes)):
     for i,(_, class_idx) in enumerate(dset.imgs):
         if class_idx > c:
+            # append current index of class switch
             class_switch.append(i)
             break
 # append last index
 class_switch.append(len(dset.imgs)-1)
 
-train_indices, val_indices, test_indices = [],[],[]
 
+train_indices, val_indices, test_indices = [],[],[]
+# go through all classes
 for i in range(len(class_switch)-1):
+    # lists the indices of each class
     rand_class = np.random.permutation(list(range(class_switch[i], class_switch[i+1])))
+    # calculate percentage of current classes
     n_80 = int(round(.8*len(rand_class)))
     n_70 = int(round(.7*len(rand_class)))
     n_60 = int(round(.6*len(rand_class)))
     n_20 = int(round(.2*len(rand_class)))
     n_10 = int(round(.1*len(rand_class)))
+    # add percentage of indices to respective lists
     train_indices.extend(rand_class[:n_70])
     val_indices.extend(rand_class[n_70:n_70+n_20])
     test_indices.extend(rand_class[n_70+n_20:])
-
-# rand_indices = np.random.permutation(N)
-# train_indices = rand_indices[:n_70]
-# val_indices = rand_indices[n_70:n_70+n_20]
-# test_indices = rand_indices[n_70+n_20:]
 
 
 # definde data loader
