@@ -25,13 +25,15 @@ class Training():
         epochs = []
 
 
+
+
         for epoch in range(0,epochs_):
-            acc_loss_counter = 0.0
-            val_acc_loss_counter = 0.0
             acc = 0.0
             loss = 0.0
             val_acc = 0.0
             val_loss = 0.0
+
+
             for i, data in enumerate(self.train_dataloader):
                 # clear gradients from last step
                 self.optimizer.zero_grad()
@@ -45,13 +47,12 @@ class Training():
 
                 acc += accuracy(output1, output2, label, self.THRESHOLD)
                 loss += loss_contrastive.item()
-                acc_loss_counter += 1
             
-            acc = acc/acc_loss_counter
-            loss = loss/acc_loss_counter
+            acc = acc/len(self.train_dataloader)
+            loss = loss/len(self.train_dataloader)
             acc_history.append(acc)
             loss_history.append(loss)
-            print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n".format(epoch,loss, acc))
+            #print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n".format(epoch,loss, acc))
 
             for i, data in enumerate(self.val_dataloader):
 
@@ -61,14 +62,13 @@ class Training():
 
                 val_acc += accuracy(output1, output2, label, self.THRESHOLD)
                 val_loss += loss_contrastive.item()
-                val_acc_loss_counter += 1
             
-            val_acc = val_acc/val_acc_loss_counter
-            val_loss = val_loss/val_acc_loss_counter
+            val_acc = val_acc/len(self.val_dataloader)
+            val_loss = val_loss/len(self.val_dataloader)
             val_acc_history.append(val_acc)
             val_loss_history.append(val_loss)
-            print("Epoch number {}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch,val_loss, val_acc))
-
+            #print("Epoch number {}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch,val_loss, val_acc))
+            print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch, loss, acc, val_loss, val_acc))
             epochs.append(epoch)
         return epochs, loss_history, val_loss_history, acc_history, val_acc_history
     
