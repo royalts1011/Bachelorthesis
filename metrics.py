@@ -42,6 +42,28 @@ def cf_matrix(ground_truth, predictions):
     return confusion_matrix(ground_truth, predictions)
 
 
+def get_metrics(cf):
+    '''
+    This function calculates different metrics and scores of a confusion matrix
+    Arguments
+    ---------
+    cf:  Confusion Matrix of size 2x2
+
+    Returns
+    ---------
+    precision, specificity, F1-score, sensitivity, specificity
+    '''
+    assert len(cf)==2, "The confusion matrix is not of binary origin or has wrong size"
+    #Metrics for Binary Confusion Matrices
+    precision = cf[0,0] / sum(cf[:,0])
+    recall    = cf[0,0] / sum(cf[0,:])
+    f1_score  = 2*precision*recall / (precision + recall)
+    sensitivity = recall
+    specificity = cf[1,1] / sum(cf[1,:])
+
+    return precision, recall, f1_score, sensitivity, specificity
+
+
 def make_confusion_matrix(cf,
                           group_names=None,
                           categories='auto',
@@ -109,9 +131,7 @@ def make_confusion_matrix(cf,
         #if it is a binary confusion matrix, show some more stats
         if len(cf)==2:
             #Metrics for Binary Confusion Matrices
-            precision = cf[0,0] / sum(cf[:,0])
-            recall    = cf[0,0] / sum(cf[0,:])
-            f1_score  = 2*precision*recall / (precision + recall)
+            precision, recall, f1_score, _, _ = get_metrics(cf)
             stats_text = "\n\nAccuracy={:0.3f}\nPrecision={:0.3f}\nRecall={:0.3f}\nF1 Score={:0.3f}".format(
                 accuracy,precision,recall,f1_score)
         else:
