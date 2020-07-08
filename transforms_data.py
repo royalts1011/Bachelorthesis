@@ -28,18 +28,18 @@ def transforms_train(img_shape):
         MyTransforms.AddGaussianNoise(blend_alpha_range=(0., 0.15)),
         transforms.ColorJitter(brightness=0.2, contrast=0.4, saturation=0.2, hue=0.02),
         #transforms.RandomHorizontalFlip(),
-        transforms.Grayscale(3),
-        transforms.ToTensor()
-        #normalize
+        #transforms.Grayscale(3),
+        transforms.ToTensor(),
+        normalize
         ])
 
 def transforms_valid_and_test(img_shape):
     return transforms.Compose([
         transforms.Resize(img_shape),
         # transforms.Lambda(lambda x: x.convert('RGB')),
-        transforms.Grayscale(3),
-        transforms.ToTensor()
-        #normalize
+        #transforms.Grayscale(3),
+        transforms.ToTensor(),
+        normalize
         ])
 
 def transforms_siamese(img_shape):
