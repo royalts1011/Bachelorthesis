@@ -33,7 +33,7 @@ class Training():
             val_acc = 0.0
             val_loss = 0.0
 
-
+            self.model.train()
             for i, data in enumerate(self.train_dataloader):
                 # clear gradients from last step
                 self.optimizer.zero_grad()
@@ -54,6 +54,7 @@ class Training():
             loss_history.append(loss)
             #print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n".format(epoch,loss, acc))
 
+            self.model.eval()
             for i, data in enumerate(self.val_dataloader):
 
                 label, output1, output2 = self.get_label_outputs(batch=data)
