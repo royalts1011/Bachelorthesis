@@ -29,6 +29,8 @@ from DLBio.pytorch_helpers import get_device
 from gpiozero import LED
 import RPi.GPIO as GPIO
 from Adafruit_CharLCD import Adafruit_CharLCD
+import shutil
+import os
 
 
 # %%

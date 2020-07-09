@@ -34,7 +34,7 @@ class Config():
 
 # %%
 model = torch.load(Config.MODEL_DIR, map_location=torch.device(Config.DEVICE))
-transformation = td.transforms_valid_and_test( td.get_resize(Config.RESIZE_SMALL) )
+transformation = td.transforms_siamese_verification( td.get_resize(Config.RESIZE_SMALL) )
 #model.eval()
 
 
@@ -68,12 +68,17 @@ def pipeline(input_, preprocess):
 # value = F.pairwise_distance(loaded_test[0],new_embedding[0]).item()
 # print(value)
 
+# %%
+a.capture_ear_images(amount_pic=12, pic_per_stage=12, is_authentification=True)
+# Die ersten Bilder entfernen, da häufig verschwommen
+os.remove('../auth_dataset/unknown-auth/unknown001.png')
+os.remove('../auth_dataset/unknown-auth/unknown002.png')
 
 # %%
 result_value = []
 result_label = []
 
-img = Image.open(Config.DATASET_DIR + 'janna_qua/janna_qua003.png')
+img = Image.open(Config.DATASET_DIR + 'unknown-auth/unknown003.png')
 new_embedding = model(Variable(pipeline(img,transformation))).cpu()
 
 for label in os.listdir(Config.DATABASE_FOLDER):
@@ -96,5 +101,5 @@ for idx, val in enumerate(result_label):
 
 
 # %%
-
+shutil.rmtree('../auth_dataset/unknown-auth')
 
