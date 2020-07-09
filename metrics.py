@@ -133,7 +133,7 @@ def make_confusion_matrix(cf,
             #Metrics for Binary Confusion Matrices
             precision, recall, f1_score, _, _ = get_metrics(cf)
             stats_text = "\n\nAccuracy={:0.3f}\nPrecision={:0.3f}\nRecall={:0.3f}\nF1 Score={:0.3f}".format(
-                accuracy,precision,recall,f1_score)
+                100*accuracy,100*precision,100*recall,100*f1_score)
         else:
             stats_text = "\n\nAccuracy={:0.3f}".format(accuracy)
     else:
