@@ -40,8 +40,9 @@ from Adafruit_CharLCD import Adafruit_CharLCD
 # DEVICE = get_device()
 
 class Config():
-    DATASET_DIR = '../dataset_low_res/'
-    CATEGORIES = ds_ear.get_dataset(DATASET_DIR, transform_mode='size_only').classes
+    DATASET_DIR = '../dataset/'
+    dset = ds_ear.get_dataset(DATASET_DIR, transform_mode='size_only')
+    CATEGORIES = dset.classes
     # CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
     CATEGORIES.sort()
     AUTHORIZED = ["falco_len","konrad_von"]
@@ -51,7 +52,7 @@ class Config():
 
 
 
-model = torch.load('./class_sample/model.pt', Config.DEVICE)
+model = torch.load('./models/cl36_c_9091.pt', Config.DEVICE)
 
 # instantiate lcd and specify pins
 lcd = Adafruit_CharLCD(rs=26, en=19,
@@ -100,10 +101,6 @@ try:
         image_transformed = image_transformed.permute(3, 0, 1, 2)
         
         image_array.append( hp.type_conversion(image_transformed) )
-#         if cuda.is_available():
-#             image_array.append(image_transformed.type('torch.cuda.FloatTensor'))
-#         else:
-#             image_array.append(image_transformed.type('torch.FloatTensor'))
 
 
     # %%
@@ -121,16 +118,13 @@ try:
         all_classes.append(class_[0])
 
         print('Highest value: ', Config.CATEGORIES[class_[0]], '\n')
-#         pred = np.append(pred, class_)
-#         pred = np.append(pred, Config.CATEGORIES[class_[0]])  
-#         print(pred, "\n")
-#     print(all_classes)
-#     print(summ_pred)
+
+    unique = list(set( [Config.CATEGORIES[c] for c in all_classes] ))
     print('\n'*2, '#'*40)
     print('Accumulated predictions:')
     hp.print_predictions(
-            [Config.CATEGORIES[c] for c in all_classes],
-            list(summ_pred[0])
+            unique,
+            [summ_pred[0][Config.dset.class_to_idx[name]] for name in unique]
             )
 
 

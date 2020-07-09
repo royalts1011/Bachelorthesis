@@ -22,9 +22,8 @@ from DLBio.pytorch_helpers import get_device
 
 
 class Config():
-    DATASET_DIR = '../dataset_low_res/'
+    DATASET_DIR = '../dataset/'
     CATEGORIES = ds_ear.get_dataset(DATASET_DIR, transform_mode='size_only').classes
-    # CATEGORIES = ["mila_wol", "falco_len", "jesse_kru", "konrad_von", "nils_loo", "johannes_boe", "johannes_wie", "sarah_feh", "janna_qua", "tim_moe"]
     CATEGORIES.sort()
     AUTHORIZED = ["falco_len","konrad_von"]
     DATA_TEST_DIR = "../auth_dataset/unknown-auth/*png"
@@ -76,18 +75,14 @@ for i in image_array:
     all_classes.append(class_[0])
 
     print('Highest value: ', Config.CATEGORIES[class_[0]], '\n')
-    # pred = np.append(pred, class_)
-    # pred = np.append(pred, Config.CATEGORIES[class_[0]])	
-	# print(pred)
 
+unique = list(set( [Config.CATEGORIES[c] for c in all_classes] ))
 print('\n'*2, '#'*40)
 print('Accumulated predictions:')
-helpers.print_predictions(
-        [Config.CATEGORIES[c] for c in all_classes],
-        list(summ_pred[0])
+hp.print_predictions(
+        unique,
+        [summ_pred[0][Config.dset.class_to_idx[name]] for name in unique]
         )
-# print(all_classes)
-# print(summ_pred)
 
 
 # %%
