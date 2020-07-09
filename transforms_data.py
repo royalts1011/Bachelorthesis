@@ -52,7 +52,7 @@ def transforms_siamese(img_shape):
         transforms.ColorJitter(brightness=0.2, contrast=0.4, saturation=0.2, hue=0.02),
         transforms.RandomPerspective(distortion_scale=0.5, p=0.5),
         transforms.Resize(img_shape),
-        transforms.RandomHorizontalFlip(),
+        #transforms.RandomHorizontalFlip(),
         transforms.ToTensor()
         ])
 
