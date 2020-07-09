@@ -49,12 +49,12 @@ class Config():
 
     DATASET_DIR = '../dataset/'
     VERIFICATION_DIR = '../auth_dataset/unknown-auth'
-    MODEL_DIR = './models/model_color.pt'
+    MODEL_DIR = './models/model_1.pt'
 
     RESIZE_SMALL = False
 
     TRESHOLD = 3.0
-    TRESHOLD_VER = 0.5
+    TRESHOLD_VER = 0.8
     a = 0
 
 model = torch.load(Config.MODEL_DIR, Config.DEVICE) 
@@ -136,11 +136,11 @@ try:
 
     # Bilder aufnehmen
     led_yellow.blink(on_time=0.5,off_time=0.25)
-    #a.capture_ear_images(amount_pic=12, pic_per_stage=12, is_authentification=True)
+    a.capture_ear_images(amount_pic=12, pic_per_stage=12, is_authentification=True)
     
     # Die ersten Bilder entfernen, da häufig verschwommen
-    #os.remove('../auth_dataset/unknown-auth/unknown001.png')
-    #os.remove('../auth_dataset/unknown-auth/unknown002.png')  
+    os.remove('../auth_dataset/unknown-auth/unknown001.png')
+    os.remove('../auth_dataset/unknown-auth/unknown002.png')  
 
     led_yellow.off()
 
@@ -228,4 +228,4 @@ finally:
     lcd.clear()
 
     # %%
-    #shutil.rmtree('../auth_dataset/unknown-auth')
+    shutil.rmtree('../auth_dataset/unknown-auth')
