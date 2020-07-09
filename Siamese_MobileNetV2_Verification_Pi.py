@@ -49,7 +49,7 @@ class Config():
 
     DATASET_DIR = '../dataset/'
     VERIFICATION_DIR = '../auth_dataset/unknown-auth'
-    MODEL_DIR = './models/model_MN_allunfreezed.pt'
+    MODEL_DIR = './models/model_color.pt'
 
     RESIZE_SMALL = False
 
