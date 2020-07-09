@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader, SubsetRandomSampler, Dataset
 # dictionary to access different transformation methods
 transform_dict = {
     'train': td.transforms_train( td.get_resize(small=False) ),
+    'train_gray': td.transforms_train_grayscale( td.get_resize(small=False) ),
     'valid_and_test': td.transforms_valid_and_test( td.get_resize(small=False) ),
     'size_only' : None
 }

@@ -13,4 +13,3 @@ __pycache__/
 class_sample/*
 *.png
 model.pt
-*.pt
