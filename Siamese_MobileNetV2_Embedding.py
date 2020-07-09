@@ -20,6 +20,8 @@ import acquire_ear_dataset as a
 
 from PIL import Image
 import glob
+import os
+import shutil
 
 
 # %%
@@ -69,16 +71,17 @@ def pipeline(input_, preprocess):
 # print(value)
 
 # %%
-a.capture_ear_images(amount_pic=12, pic_per_stage=12, is_authentification=True)
+a.capture_ear_images(amount_pic=4, pic_per_stage=4, is_authentification=True)
 # Die ersten Bilder entfernen, da häufig verschwommen
 os.remove('../auth_dataset/unknown-auth/unknown001.png')
 os.remove('../auth_dataset/unknown-auth/unknown002.png')
+os.remove('../auth_dataset/unknown-auth/unknown003.png')
 
 # %%
 result_value = []
 result_label = []
 
-img = Image.open(Config.DATASET_DIR + 'unknown-auth/unknown003.png')
+img = Image.open(Config.AUTH_DATASET_DIR + 'unknown004.png')
 new_embedding = model(Variable(pipeline(img,transformation))).cpu()
 
 for label in os.listdir(Config.DATABASE_FOLDER):
