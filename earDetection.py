@@ -41,6 +41,13 @@ while True:
     k = cv2.waitKey(30) & 0xff
     if k == 27: # press 'ESC' to quit
         break
+    if k == ord('p'):
+#         img = img[top+1:bottom, left+1:right] # +1 eliminates rectangle artifacts
+#         # Re-flip image to original
+        img = cv2.flip(img, 1)
+        # Save the captured image into the datasets folder
+        cv2.imwrite("test_im.png", img)
+        print('Take image')
 
 cap.release()
 cv2.destroyAllWindows()

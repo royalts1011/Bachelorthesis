@@ -56,7 +56,8 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
     # For each person, enter a new identification name
     ear_name = input('\n Enter name end press <return> ==>  ')
 
-    dataset_dir = join(dirname(os.getcwd()), 'dataset')
+#     dataset_dir = join(dirname(os.getcwd()), 'dataset')
+    dataset_dir = join(dirname(os.getcwd()), 'dataset_tilt')
     if not exists(dataset_dir):
         os.mkdir(dataset_dir)
 
