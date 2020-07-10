@@ -11,6 +11,10 @@ import time
 PICTURES  = 80
 STEP = 20
 
+DATASET_DIR = '../dataset'
+GREEN = (0,255,0)
+
+
 # additional space around the ear to be captured
 # 0.1 is tightly around, 0.2 more generous 
 SCALING = 0.2
@@ -56,12 +60,10 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
     # For each person, enter a new identification name
     ear_name = input('\n Enter name end press <return> ==>  ')
 
-#     dataset_dir = join(dirname(os.getcwd()), 'dataset')
-    dataset_dir = join(dirname(os.getcwd()), 'dataset_tilt')
-    if not exists(dataset_dir):
-        os.mkdir(dataset_dir)
+    if not exists(DATASET_DIR):
+        os.mkdir(DATASET_DIR)
 
-    usr_dir = (join(dataset_dir, ear_name), join(dataset_dir, (ear_name + '-auth')))[is_authentification]
+    usr_dir = (join(DATASET_DIR, ear_name), join(DATASET_DIR, (ear_name + '-auth')))[is_authentification]
     if not exists(usr_dir):
         os.mkdir(usr_dir)
 
@@ -85,8 +87,7 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
             top = y - int(h * SCALING_H)
             right = x + int(w * (1+SCALING_W))
             bottom = y + int(h * (1+SCALING_H))
-            green = (0,255,0)
-            cv2.rectangle(frame, (left, top), (right, bottom), color=green, thickness=1)   
+            cv2.rectangle(frame, (left, top), (right, bottom), color=GREEN, thickness=1)   
             count += 1
 
             cv2.imshow('Frame', frame)

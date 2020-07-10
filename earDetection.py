@@ -3,6 +3,21 @@ import cv2
 
 earCascade = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
+#########################################################################
+# SET PARAMETERS
+#########################################################################
+
+GREEN = (0,255,0)
+
+# additional space around the ear to be captured
+# 0.1 is tightly around, 0.2 more generous 
+SCALING = 0.2
+SCALING_H = 0.05
+SCALING_W = 0.2 
+
+#########################################################################
+
+
 cap = cv2.VideoCapture(0)
 # open window dimensions
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280) # set Width
@@ -22,19 +37,13 @@ while True:
         minSize=(20, 20)
     )
 
-    for (x,y,w,h) in ears:
-        green = (0,255,0)
-        scaling_h = 0.05
-        scaling_w = 0.2
-        start_w = int(w * scaling_w)
-        start_h= int(h * scaling_h)
-        stop_w = int(w * (1+scaling_w))
-        stop_h = int(h * (1+scaling_h))
-        cv2.rectangle(img, (x-start_w,y-start_h), (x+stop_w,y+stop_h), color=green, thickness=1)
-
-        # roi_gray = gray[y:y+h, x:x+w]
-        # roi_color = img[y:y+h, x:x+w]
-        
+    for (x,y,w,h) in ears:        
+        # bounding box will be bigger by increasing the scaling
+        left = x - int(w * SCALING_W)
+        top = y - int(h * SCALING_H)
+        right = x + int(w * (1+SCALING_W))
+        bottom = y + int(h * (1+SCALING_H))
+        cv2.rectangle(img, (left, top), (right, bottom), color=GREEN, thickness=1)
 
     cv2.imshow('video',img)
 
@@ -42,12 +51,12 @@ while True:
     if k == 27: # press 'ESC' to quit
         break
     if k == ord('p'):
-#         img = img[top+1:bottom, left+1:right] # +1 eliminates rectangle artifacts
-#         # Re-flip image to original
+        img = img[top+1:bottom, left+1:right] # +1 eliminates rectangle artifacts
+        # Re-flip image to original
         img = cv2.flip(img, 1)
         # Save the captured image into the datasets folder
-        cv2.imwrite("test_im.png", img)
-        print('Take image')
+        cv2.imwrite("../SIZE_TEST.png", img)
+        print('Test image taken')
 
 cap.release()
 cv2.destroyAllWindows()
