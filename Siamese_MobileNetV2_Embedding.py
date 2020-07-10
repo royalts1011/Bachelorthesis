@@ -29,7 +29,7 @@ class Config():
     DEVICE = get_device()
     DATASET_DIR = '../dataset/'
     AUTH_DATASET_DIR = '../auth_dataset/unknown-auth/'
-    MODEL_DIR = './models/model_1.pt'
+    MODEL_DIR = './models/ve_g_9997.pt'
     RESIZE_SMALL = False
     DATABASE_FOLDER = './embeddings/'
 
