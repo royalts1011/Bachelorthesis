@@ -9,5 +9,4 @@
 .idea/
 __pycache__/
 *.png
-*.pt
-*.npy
+model.pt
