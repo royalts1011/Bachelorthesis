@@ -32,6 +32,9 @@ class Config():
     MODEL_DIR = './models/ve_g_9997.pt'
     is_small_resize = False
     DATABASE_FOLDER = './embeddings/'
+    THRESHOLD_VAL = 1.0
+    THRESHOLD = 2.0
+    a = 0.1
 
 
 # %%
@@ -52,23 +55,6 @@ def pipeline(input_, preprocess):
     else:
         return input_.type('torch.FloatTensor')
 
-
-# %%
-# img = Image.open(Config.DATASET_DIR + 'janna_qua/janna_qua003.png')
-# new_embedding = [model(Variable(pipeline(img,transformation))).cpu()]
-# test = np.array(new_embedding)
-
-# np.save('test.npy', test)
-
-
-# %%
-# loaded_test = np.load('test.npy', allow_pickle=True)
-
-# print(loaded_test)
-# print(new_embedding)
-
-# value = F.pairwise_distance(loaded_test[0],new_embedding[0]).item()
-# print(value)
 
 # %%
 a.capture_ear_images(amount_pic=4, pic_per_stage=4, is_authentification=True)
@@ -101,6 +87,19 @@ result_label = result_label[:10]
 
 for idx, val in enumerate(result_label):
     print(str(idx+1) + ' : ' + ' ' + val + ' : ' + ' ' + str(result_value[idx]))
+
+
+
+
+#%%
+if result_value[0] > Config.THRESHOLD_VAL and result_value[0] < Config.THRESHOLD:
+    print('Cant find authorized Person in Database. Pls try again')
+
+if (result_value[0] + Config.a) >= result_value[1]:
+    print('Verification not clear enough. Access denied. Please try again.')
+
+if (result_value[0] + Config.a) < result_value[1] and result_value[0] <= Config.THRESHOLD_VAL:
+    print("Access granted! Welcome "  + result_label[0] + "!")
 
 
 # %%

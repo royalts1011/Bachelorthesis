@@ -51,7 +51,7 @@ class Config():
 
     DATASET_DIR = '../dataset/'
     VERIFICATION_DIR = '../auth_dataset/unknown-auth'
-    MODEL_DIR = './models/model_1.pt'
+    MODEL_DIR = './models/ve_g_9997.pt'
 
     is_small_resize = False
     
@@ -192,12 +192,15 @@ try:
     NUMBER_AUTHORIZED = int(.8*len(triplet_list))
     access = False
 
-    # LCD output
-    lcd.clear()
-    entry_string = 'Hi ' + pers_to_ver
-    lcd.message('Access granted\n'+ entry_string)
     
     if  pers_to_ver in Config.AUTHORIZED and verification_counter >= NUMBER_AUTHORIZED:
+        
+        # LCD output
+        lcd.clear()
+        entry_string = 'Hi ' + pers_to_ver
+        lcd.message('Access granted\n'+ entry_string)
+            
+        
         # scroll through whole text until its gone
         if(len(entry_string)>16):            
             sleep(2)
