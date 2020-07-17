@@ -30,13 +30,13 @@ class Config():
     DATASET_DIR = '../dataset/'
     AUTH_DATASET_DIR = '../auth_dataset/unknown-auth/'
     MODEL_DIR = './models/ve_g_9997.pt'
-    RESIZE_SMALL = False
+    is_small_resize = False
     DATABASE_FOLDER = './embeddings/'
 
 
 # %%
 model = torch.load(Config.MODEL_DIR, map_location=torch.device(Config.DEVICE))
-transformation = td.transforms_siamese_verification( td.get_resize(Config.RESIZE_SMALL) )
+transformation = td.get_transform('siamese_valid_and_test', Config.is_small_resize)
 #model.eval()
 
 
@@ -44,7 +44,7 @@ transformation = td.transforms_siamese_verification( td.get_resize(Config.RESIZE
 def pipeline(input_, preprocess):
     input_ = input_.convert("L")
     input_ = preprocess(input_)
-    input_ = input_.reshape(-1, td.get_resize(Config.RESIZE_SMALL)[0], td.get_resize(Config.RESIZE_SMALL)[1], 1)
+    input_ = input_.reshape(-1, td.get_resize(Config.is_small_resize)[0], td.get_resize(Config.is_small_resize)[1], 1)
     input_ = input_.permute(3, 0, 1, 2)
 
     if cuda.is_available():

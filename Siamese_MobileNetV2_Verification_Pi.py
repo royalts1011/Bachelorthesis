@@ -53,8 +53,8 @@ class Config():
     VERIFICATION_DIR = '../auth_dataset/unknown-auth'
     MODEL_DIR = './models/model_1.pt'
 
-    RESIZE_SMALL = False
-
+    is_small_resize = False
+    
     TRESHOLD = 3.0
     TRESHOLD_VER = 0.8
     a = 0
@@ -84,7 +84,7 @@ def image_pipeline(input_, preprocess):
     input_ = Image.open(input_)
     input_ = input_.convert("L")
     input_ = preprocess(input_)
-    input_ = input_.reshape(-1, td.get_resize(Config.RESIZE_SMALL)[0], td.get_resize(Config.RESIZE_SMALL)[1], 1)
+    input_ = input_.reshape(-1, td.get_resize(Config.is_small_resize)[0], td.get_resize(Config.is_small_resize)[1], 1)
     input_ = input_.permute(3, 0, 1, 2)
     
     if cuda.is_available():
@@ -100,7 +100,7 @@ def get_triplets(dataset_path, user_name, verif_dataset):
     NUM_CLASSES = len(dataset_classes)
     user_imgs = helpers.rm_DSStore( os.listdir(join(dataset_path, user_name)) )
     
-    preprocess = td.transforms_siamese_verification( td.get_resize(Config.RESIZE_SMALL) )
+    preprocess = td.get_transform('siamese_valid_and_test', Config.is_small_resize)
 
     # Triplets list will contain anchor(A), positive(P) and negative(N) triplets.
     triplets = []
