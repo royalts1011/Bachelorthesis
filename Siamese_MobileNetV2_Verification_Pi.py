@@ -51,7 +51,7 @@ class Config():
 
     DATASET_DIR = '../dataset/'
     VERIFICATION_DIR = '../auth_dataset/unknown-auth'
-    MODEL_DIR = './models/model_1.pt'
+    MODEL_DIR = './models/ve_g_9997.pt'
 
     RESIZE_SMALL = False
 
