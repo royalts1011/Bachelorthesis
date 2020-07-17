@@ -29,6 +29,7 @@ import RPi.GPIO as GPIO
 from Adafruit_CharLCD import Adafruit_CharLCD
 import shutil
 import os
+from time import sleep
 
 
 # %%
@@ -53,7 +54,7 @@ class Config():
     THRESHOLD_VAL = 1.0
     THRESHOLD = 2.0
     a = 0.1
-    AUTHORIZED = ["falco_len","konrad_von"]
+    AUTHORIZED = ["falco_len.npy","konrad_von.npy"]
 
 
 # %%
@@ -163,6 +164,9 @@ try:
 
 
 
+finally:
+    # clear outputs
+    lcd.clear()
 
     # %%
     shutil.rmtree('../auth_dataset/unknown-auth')
