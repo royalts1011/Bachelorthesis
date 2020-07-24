@@ -50,7 +50,7 @@ def transforms_siamese(img_shape):
         transforms.RandomAffine(degrees=15, fillcolor=mean_pil),
         MyTransforms.MyRandomCrop(crop_ratio=0.1, b_keep_aspect_ratio=True),
         transforms.ColorJitter(brightness=0.2, contrast=0.4, saturation=0.2, hue=0.02),
-        transforms.RandomPerspective(distortion_scale=0.5, p=0.5),
+        #transforms.RandomPerspective(distortion_scale=0.5, p=0.5),
         transforms.Resize(img_shape),
         #transforms.RandomHorizontalFlip(),
         transforms.ToTensor()
