@@ -6,6 +6,7 @@ sys.path.append('../..')
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import csv
 
 # PyTorch
 import torch
@@ -61,7 +62,7 @@ class Config():
     vis_batch_size = 8
     num_workers = 3
     
-    EPOCHS=50
+    EPOCHS=15
     LEARNINGRATE = 0.0001
     #WEIGHT_DECAY = 0.0
 
@@ -108,7 +109,6 @@ def diff(first, second):
 
 # %%
 # define indicies to split Data
-# dset = ds_ear_siamese.get_dataset(data_path=Config.dataset_dir, transform_mode='size_only')
 dset = ds_ear_siamese.get_dataset(data_path=Config.dataset_dir, transformation=td.get_transform('size_only', is_small=Config.is_small_resize) )
 N = len(dset)
 classes = [dset.class_to_idx[class_] for class_ in dset.classes]
@@ -151,7 +151,7 @@ for i,(_, class_idx) in enumerate(dset.imgs):
 train_dataloader = ds_ear_siamese.get_dataloader(
     data_path=Config.dataset_dir,
     indices=train_indices,
-    transformation=td.get_transform('siamese', is_small=Config.is_small_resize), # TODO switch to another transform?,
+    transformation=td.get_transform('siamese', is_small=Config.is_small_resize),
     batch_size=Config.train_batch_size,
     num_workers=Config.num_workers,
     should_invert = False
@@ -178,7 +178,7 @@ vis_dataloader = ds_ear_siamese.get_dataloader(
     data_path=Config.dataset_dir,
     indices=train_indices,
     transformation=td.get_transform('siamese', is_small=Config.is_small_resize),
-    batch_size=8,
+    batch_size=Config.vis_batch_size,
     num_workers=Config.num_workers,
     should_invert = False
 )
@@ -187,18 +187,11 @@ vis_dataloader = ds_ear_siamese.get_dataloader(
 # %%
 # visualize some data....
 # dataiter = iter(vis_dataloader)
-for batch in vis_dataloader:
-    example_batch = batch
-    print('done')
+
 # example_batch = next(dataiter)
 # concatenated = torch.cat((example_batch[0], example_batch[1]),0)
-a =  1
-for batch in vis_dataloader:
-    example_batch = batch
-    print('done')
-# example_two = next(dataiter)
 # imshow(make_grid(concatenated))
-print(example_batch[2].numpy())
+# print(example_batch[2].numpy())
 
 
 # %%
@@ -261,11 +254,35 @@ get_num_params(model,True)
 
 
 # %%
+# opening the file with w+ mode truncates the file (clear file before training)
+f = open('log_dist_label.csv', 'w+')
+f.close()
+
 training = Training(model=model, optimizer=optimizer_siamese,train_dataloader=train_dataloader, val_dataloader=val_dataloader, loss_contrastive=contrastive_loss_siamese, nn_Siamese=Config.NN_SIAMESE, THRESHOLD=Config.TRESHOLD_VER)
 
 epochs, loss_history, val_loss_history, acc_history, val_acc_history = training(Config.EPOCHS)
 show_plot(epochs, loss_history, val_loss_history,'train_loss', 'val_loss',1)
 show_plot(epochs, acc_history, val_acc_history,'train_acc', 'val_acc', 2)
+
+
+# %%
+def calc_thresh():
+    with open('log_dist_label.csv', 'r') as f:
+        reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
+        # data = list(reader)
+        data = [tuple(row) for row in reader]
+
+        thresh_same, thresh_diff = [], []
+        for thresh,label in data:
+            if label == 0: thresh_same.append(thresh) # Images came from same person
+            else: thresh_diff.append(thresh)
+        average_thresh_same = sum(thresh_same) / len(thresh_same)
+        average_thresh_diff = sum(thresh_diff) / len(thresh_diff)
+        print(average_thresh_same)
+        print(average_thresh_diff)
+    return average_thresh_same
+
+print(calc_thresh())
 
 
 # %%
@@ -310,11 +327,11 @@ labels = ['True Pos','False Neg','False Pos','True Neg']
 categories = ['Same', 'Different']
 
 # plot matrix
-M.make_confusion_matrix(cf,
-                        group_names=labels,
-                        categories=categories,
-                        cbar=True
-                        )
+# M.make_confusion_matrix(cf,
+#                         group_names=labels,
+#                         categories=categories,
+#                         cbar=True
+#                         )
 
 
 # %%

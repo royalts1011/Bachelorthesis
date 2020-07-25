@@ -2,6 +2,8 @@ from torch import cuda
 import torch.nn.functional as NNF
 from metrics import accuracy
 from helpers import cuda_conv
+import csv
+
 
 class Training():
     def __init__(
@@ -34,19 +36,30 @@ class Training():
             val_loss = 0.0
 
             self.model.train()
-            for i, data in enumerate(self.train_dataloader):
-                # clear gradients from last step
-                self.optimizer.zero_grad()
+            # initiate threshold log file
+            with open('log_dist_label.csv', 'a') as f:
+                writer = csv.writer(f, delimiter=',', lineterminator='\n')
+                for i, data in enumerate(self.train_dataloader):
+                    # clear gradients from last step
+                    self.optimizer.zero_grad()
 
-                label, output1, output2 = self.get_label_outputs(batch=data)
+                    label, output1, output2 = self.get_label_outputs(batch=data)
 
-                loss_contrastive = self.loss_contrastive(output1,output2,label)
-                # backpropagation
-                loss_contrastive.backward()
-                self.optimizer.step()
+                    # compute distance and save in file
+                    dist = NNF.pairwise_distance(output1, output2, keepdim = True)
+                    dist = [x.detach().numpy()[0] for x in dist]
+                    save_label = [x.detach().numpy()[0] for x in label]
+                    for d,l in zip(dist, save_label):
+                        writer.writerow([d, l])
 
-                acc += accuracy(output1, output2, label, self.THRESHOLD)
-                loss += loss_contrastive.item()
+                    loss_contrastive = self.loss_contrastive(output1,output2,label)
+                    # backpropagation
+                    loss_contrastive.backward()
+                    self.optimizer.step()
+
+                    acc += accuracy(output1, output2, label, self.THRESHOLD)
+                    loss += loss_contrastive.item()
+            f.close()
             
             acc = acc/len(self.train_dataloader)
             loss = loss/len(self.train_dataloader)
@@ -73,6 +86,7 @@ class Training():
             epochs.append(epoch)
         return epochs, loss_history, val_loss_history, acc_history, val_acc_history
     
+
 
  
     def get_label_outputs(self, batch):
