@@ -10,9 +10,24 @@ norm_std=[0.229, 0.224, 0.225] # imageNet std
 
 normalize = transforms.Normalize( mean=norm_mean, std=norm_std )
 
+
+def get_transform(dict_key, is_small):
+
+    # dictionary to access different transformation methods
+    transform_dict = {
+        'train': transforms_train(get_resize(is_small=is_small) ),
+        'valid_and_test': transforms_valid_and_test( get_resize(is_small=is_small) ),
+        'siamese' : transforms_siamese( get_resize(is_small=is_small) ),
+        'siamese_valid_and_test' : transforms_siamese_verification( get_resize(is_small=is_small) ),
+        'size_only' : None
+    }
+    assert dict_key in transform_dict, "The string "+str(dict_key)+" was not found in dictionary"
+    
+    return transform_dict[dict_key]
+
 # Returns boolean decision of small or bigger
-def get_resize(small):
-    if small: return 150, 100
+def get_resize(is_small):
+    if is_small: return 150, 100
     else: return 280, 230
 
 
@@ -27,19 +42,19 @@ def transforms_train(img_shape):
         #MyTransforms.GaussianBlur(p=0.2, max_radius=4),
         MyTransforms.AddGaussianNoise(blend_alpha_range=(0., 0.15)),
         transforms.ColorJitter(brightness=0.2, contrast=0.4, saturation=0.2, hue=0.02),
-        transforms.RandomHorizontalFlip(),
+        #transforms.RandomHorizontalFlip(),
         #transforms.Grayscale(3),
         transforms.ToTensor(),
-        #normalize
+        normalize
         ])
 
 def transforms_valid_and_test(img_shape):
     return transforms.Compose([
         transforms.Resize(img_shape),
-        #transforms.Lambda(lambda x: x.convert('RGB')),
+        # transforms.Lambda(lambda x: x.convert('RGB')),
         #transforms.Grayscale(3),
         transforms.ToTensor(),
-        #normalize
+        normalize
         ])
 
 def transforms_siamese(img_shape):
