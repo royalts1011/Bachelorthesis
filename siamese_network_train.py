@@ -47,8 +47,8 @@ class Training():
 
                     # compute distance and save in file
                     dist = NNF.pairwise_distance(output1, output2, keepdim = True)
-                    dist = [x.detach().numpy()[0] for x in dist]
-                    save_label = [x.detach().numpy()[0] for x in label]
+                    dist = [x.cpu().detach().numpy()[0] for x in dist]
+                    save_label = [x.cpu().detach().numpy()[0] for x in label]
                     for d,l in zip(dist, save_label):
                         writer.writerow([d, l])
 

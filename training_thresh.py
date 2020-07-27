@@ -62,7 +62,7 @@ class Config():
     vis_batch_size = 8
     num_workers = 3
     
-    EPOCHS=15
+    EPOCHS=50
     LEARNINGRATE = 0.0001
     #WEIGHT_DECAY = 0.0
 
@@ -278,7 +278,7 @@ def calc_thresh():
             else: thresh_diff.append(thresh)
         average_thresh_same = sum(thresh_same) / len(thresh_same)
         average_thresh_diff = sum(thresh_diff) / len(thresh_diff)
-        print(average_thresh_same)
+        print(len(thresh_same))
         print(average_thresh_diff)
     return average_thresh_same
 
