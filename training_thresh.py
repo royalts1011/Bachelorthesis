@@ -278,11 +278,11 @@ def calc_thresh():
             else: thresh_diff.append(thresh)
         average_thresh_same = sum(thresh_same) / len(thresh_same)
         average_thresh_diff = sum(thresh_diff) / len(thresh_diff)
-        print(len(thresh_same))
-        print(average_thresh_diff)
+        print("Average dist different: ", average_thresh_diff)
+        print('Amount of "same" distances: ', len(thresh_same))
     return average_thresh_same
 
-print(calc_thresh())
+print("Average dist same: ", calc_thresh())
 
 
 # %%
