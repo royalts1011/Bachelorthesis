@@ -16,18 +16,14 @@ def get_resize(small):
 
 
 def transforms_train_grayscale(img_shape):
-    mean_pil = tuple([int(x*255) for x in norm_mean])
     return transforms.Compose([
         MyTransforms.RandomScaleWithMaxSize(img_shape, 0.8),
-        transforms.RandomAffine(degrees=15, fillcolor=mean_pil),
-        # MyTransforms.PadToSize(img_shape, mean_pil),
+        transforms.RandomAffine(degrees=15),
         MyTransforms.MyRandomCrop(crop_ratio=0.1, b_keep_aspect_ratio=True),
         transforms.ColorJitter(brightness=0.2, contrast=0.4, saturation=0.2, hue=0.02),
-        # transforms.RandomPerspective(p=0.5, distortion_scale=0.5),
         transforms.Resize(img_shape),
         transforms.Grayscale(1),
         transforms.ToTensor(),
-        # normalize
         ])
 
 
@@ -50,11 +46,11 @@ def transforms_train(img_shape):
 
 def transforms_valid_and_test(img_shape):
     return transforms.Compose([
-        transforms.Grayscale(1),
         transforms.Resize(img_shape),
+        transforms.Grayscale(1),
         # transforms.Lambda(lambda x: x.convert('RGB')), # needed when image comes from notebook camera
         transforms.ToTensor(),
-        normalize
+        # normalize
         ])
 
 class UnNormalize(object):
