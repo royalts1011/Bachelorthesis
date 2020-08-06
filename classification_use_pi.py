@@ -52,7 +52,7 @@ class Config():
 
 
 
-model = torch.load('./models/cl36_c_9091.pt', Config.DEVICE)
+model = torch.load('./models/cl47_g_9396.pt', Config.DEVICE)
 
 # instantiate lcd and specify pins
 lcd = Adafruit_CharLCD(rs=26, en=19,

@@ -50,7 +50,6 @@ def transforms_valid_and_test(img_shape):
         transforms.Grayscale(1),
         # transforms.Lambda(lambda x: x.convert('RGB')), # needed when image comes from notebook camera
         transforms.ToTensor(),
-        # normalize
         ])
 
 class UnNormalize(object):
