@@ -13,7 +13,7 @@ STEP = 20
 RECT_COL = (0,255,0)
 
 DATASET_DIR = '../dataset'
-PIC_DIR = '../temp_imgs'
+PIC_DIR = '../auth_dataset'
 
 # additional space around the ear to be captured
 # 0.1 is tightly around, 0.2 more generous 
@@ -55,9 +55,16 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
 
     # Set correct folder path and person's name
     target_folder = (DATASET_DIR, PIC_DIR)[is_authentification]
-    ear_name = (input('\n Enter name end press <return> ==>  '), 'unknown')[is_authentification]   
+    if is_authentification:
+        ear_name = 'unknown'
+        appendix = '-auth'
+    else:
+        ear_name = input('\n Enter name end press <return> ==>  ')
+        appendix = ''
+
+#     ear_name = (input('\n Enter name end press <return> ==>  '), 'unknown')[is_authentification]   
     if not exists(target_folder): os.mkdir(target_folder)
-    usr_dir = join(target_folder, ear_name)
+    usr_dir = join(target_folder, ear_name + appendix)
     if not exists(usr_dir): os.mkdir(usr_dir)
     print(INSTRUCTION)
 

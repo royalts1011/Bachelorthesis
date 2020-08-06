@@ -48,10 +48,10 @@ class Config():
     DEVICE = get_device()
     DATASET_DIR = '../dataset/'
     AUTH_DATASET_DIR = '../auth_dataset/unknown-auth/'
-    MODEL_DIR = './models/ve_g_9997.pt'
+    MODEL_DIR = './models/ve_g_margin_2,0.pt'
     is_small_resize = False
-    DATABASE_FOLDER = './embeddings/'
-    THRESHOLD_VAL = 1.0
+    DATABASE_FOLDER = './embeddings/radius_2.0/'
+    THRESHOLD_VAL = 0.9
     THRESHOLD = 2.0
     a = 0.1
     AUTHORIZED = ["falco_len.npy","konrad_von.npy"]
