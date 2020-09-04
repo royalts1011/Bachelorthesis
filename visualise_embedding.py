@@ -1,8 +1,8 @@
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 import tensorboard as tb
 import torch
-tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
+# tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
 from torch.utils.tensorboard import SummaryWriter
 import os
 from PIL import Image
@@ -13,7 +13,7 @@ vectors = []
 metadata = []
 #label_img = []
 class Config():
-    DATABASE_FOLDER = './embeddings/'
+    DATABASE_FOLDER = './embeddings/radius_2.0/'
     DATASET_DIR = '../dataset/'
 
 
@@ -23,7 +23,7 @@ for label in os.listdir(Config.DATABASE_FOLDER):
     
     for idx, e in enumerate(loaded_embedding):
         vectors.append(e.detach().numpy()[0])
-        metadata.append(label)
+        metadata.append(label[:-4])
     
 # for label in os.listdir(Config.DATASET_DIR):
 #     test = glob.glob(Config.DATASET_DIR+label+'/*')
