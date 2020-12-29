@@ -1,2 +1,0 @@
-# Bachelorthesis
-All Bachelorthesis stuff.

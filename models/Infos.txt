@@ -1,0 +1,1 @@
+ve_g_9997: mit RandomPerspective, alle Weights Trainiert, Image Size(280x230)

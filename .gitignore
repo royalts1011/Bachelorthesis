@@ -6,6 +6,7 @@
 *.json
 .DS_Store
 .vscode/
-.vscode/settings.json
 .idea/
 __pycache__/
+model.pt
+/runs/*

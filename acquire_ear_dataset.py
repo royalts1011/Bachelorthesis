@@ -1,54 +1,121 @@
 import cv2
 import os
-# import copy
+from os.path import join, dirname, exists
+import time
 
-cam = cv2.VideoCapture(0)
-# open window dimensions
-cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640) # set Width
-cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) # set Height
+#########################################################################
+# SET PARAMETERS
+#########################################################################
 
-ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
+# set amount of pictures and pictures per step setting
+PICTURES  = 80
+STEP = 20
+RECT_COL = (0,255,0)
 
-# For each person, enter one numeric face id
-ear_name = input('\n enter username end press <return> ==>  ')
+DATASET_DIR = '../dataset'
+PIC_DIR = '../auth_dataset'
 
-print("\n [INFO] Initializing face capture. Look the camera and wait ...")
-# Initialize individual sampling face count
-count = 0
+# additional space around the ear to be captured
+# 0.1 is tightly around, 0.2 more generous 
+SCALING = 0.2
+SCALING_H = 0.05
+SCALING_W = 0.2 
 
-while(True):
-    # ignore boolean return Value, only receive image
-    ret, img = cam.read()
-    # flip video frame horizontally as webcams take mirror image
-    img = cv2.flip(img, 1)
-    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # img_show = copy.copy(img)
-    ears = ear_detector.detectMultiScale(img, 1.1, 5)
+INSTRUCTION = "\n [INFO] Initializing ear capture. Turn your head left. Your right ear should then be facing the camera."
 
-    
+#########################################################################
 
-    for (x,y,w,h) in ears:
-        green = (0,255,0)
-        scaling = 0.2
-        start_w = int(w * scaling)
-        start_h= int(h * scaling)
-        stop_w = int(w * (1+scaling))
-        stop_h = int(h * (1+scaling))
-        cv2.rectangle(img, (x-start_w,y-start_h), (x+stop_w,y+stop_h), color=green, thickness=1)   
-        count += 1
+def make_720(object):
+    object.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    object.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+def make_540(object):
+    object.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
+    object.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)
+def make_480(object):
+    object.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    object.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+def make_240(object):
+    object.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+    object.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
-        # Save the captured image into the datasets folder
-        cv2.imwrite("dataset/User." + ear_name + '.' + str(count) + ".jpg", img[y-start_h+1:y+stop_h, x-start_w+1:x+stop_w]) # +1 eliminates rectangle artifacts
+def rescale_frame(frame, percent=75):
+    width = int(frame.shape[1] * percent/ 100)
+    height = int(frame.shape[0] * percent/ 100)
+    dim = (width, height)
+    return cv2.resize(frame, dim, interpolation = cv2.INTER_AREA)
 
-        cv2.imshow('image', img)
+def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, is_authentification=False):
 
-    k = cv2.waitKey(100) & 0xff # Press 'ESC' for exiting video
-    if k == 27:
-        break
-    elif count >= 10: # Take 30 face sample and stop video
-         break
+    cap = cv2.VideoCapture(0)
+    time.sleep(2.0)
+    # open window dimensions
+    make_720(cap)
 
-# Do a bit of cleanup
-print("\n [INFO] Exiting Program and cleanup stuff")
-cam.release()
-cv2.destroyAllWindows()
+    ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
+
+    # Set correct folder path and person's name
+    target_folder = (DATASET_DIR, PIC_DIR)[is_authentification]
+    if is_authentification:
+        ear_name = 'unknown'
+        appendix = '-auth'
+    else:
+        ear_name = input('\n Enter name end press <return> ==>  ')
+        appendix = ''
+
+#     ear_name = (input('\n Enter name end press <return> ==>  '), 'unknown')[is_authentification]   
+    if not exists(target_folder): os.mkdir(target_folder)
+    usr_dir = join(target_folder, ear_name + appendix)
+    if not exists(usr_dir): os.mkdir(usr_dir)
+    print(INSTRUCTION)
+
+        
+    # Initialize individual sampling ear count
+    count = 0
+
+    while True:
+        # receive image
+        ret, frame = cap.read()
+        # flip video frame horizontally to show it "mirror-like"
+        frame = cv2.flip(frame, 1)
+        rects = ear_detector.detectMultiScale(frame, 1.1, 5)
+
+        for (x,y,w,h) in rects:
+            # bounding box will be bigger by increasing the scaling
+            left = x - int(w * SCALING_W)
+            top = y - int(h * SCALING_H)
+            right = x + int(w * (1+SCALING_W))
+            bottom = y + int(h * (1+SCALING_H))
+
+            cv2.rectangle(frame, (left, top), (right, bottom), color=RECT_COL, thickness=1)   
+            count += 1
+            cv2.imshow('Frame', frame)
+
+            frame = frame[top+1:bottom, left+1:right] # +1 eliminates rectangle artifacts
+            # Re-flip image to original
+            frame = cv2.flip(frame, 1)
+            # Save the captured image into the datasets folder
+            cv2.imwrite(join(usr_dir, (ear_name + "{0:0=3d}".format(count) + ".png")), frame)
+
+            # display after defined set of steps 
+            if (count%pic_per_stage) == 0 and count != amount_pic:
+                print("\n [INFO] Next step commencing... \n")
+                print(count)
+                input("Reposition your head and press <return> to continue.")
+
+
+        k = cv2.waitKey(100) & 0xff # Press 'ESC' for exiting video
+        if k == 27:
+            break
+        elif count >= amount_pic: # Stop loop when the amount of pictures is collected
+            print(count)
+            break
+
+
+    # Do a bit of cleanup
+    print("\n [INFO] Exiting Program.")
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+if __name__=='__main__':
+    capture_ear_images()    
