@@ -2,6 +2,8 @@ from torch import cuda
 import torch.nn.functional as NNF
 from metrics import accuracy
 from helpers import cuda_conv
+import csv
+
 
 class Training():
     def __init__(
@@ -25,34 +27,47 @@ class Training():
         epochs = []
 
 
+
+
         for epoch in range(0,epochs_):
-            acc_loss_counter = 0.0
-            val_acc_loss_counter = 0.0
             acc = 0.0
             loss = 0.0
             val_acc = 0.0
             val_loss = 0.0
-            for i, data in enumerate(self.train_dataloader):
-                # clear gradients from last step
-                self.optimizer.zero_grad()
 
-                label, output1, output2 = self.get_label_outputs(batch=data)
+            self.model.train()
+            # initiate threshold log file
+            with open('log_dist_label.csv', 'a') as f:
+                writer = csv.writer(f, delimiter=',', lineterminator='\n')
+                for i, data in enumerate(self.train_dataloader):
+                    # clear gradients from last step
+                    self.optimizer.zero_grad()
 
-                loss_contrastive = self.loss_contrastive(output1,output2,label)
-                # backpropagation
-                loss_contrastive.backward()
-                self.optimizer.step()
+                    label, output1, output2 = self.get_label_outputs(batch=data)
 
-                acc += accuracy(output1, output2, label, self.THRESHOLD)
-                loss += loss_contrastive.item()
-                acc_loss_counter += 1
+                    # compute distance and save in file
+                    dist = NNF.pairwise_distance(output1, output2, keepdim = True)
+                    dist = [x.cpu().detach().numpy()[0] for x in dist]
+                    save_label = [x.cpu().detach().numpy()[0] for x in label]
+                    for d,l in zip(dist, save_label):
+                        writer.writerow([d, l])
+
+                    loss_contrastive = self.loss_contrastive(output1,output2,label)
+                    # backpropagation
+                    loss_contrastive.backward()
+                    self.optimizer.step()
+
+                    acc += accuracy(output1, output2, label, self.THRESHOLD)
+                    loss += loss_contrastive.item()
+            f.close()
             
-            acc = acc/acc_loss_counter
-            loss = loss/acc_loss_counter
+            acc = acc/len(self.train_dataloader)
+            loss = loss/len(self.train_dataloader)
             acc_history.append(acc)
             loss_history.append(loss)
-            print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n".format(epoch,loss, acc))
+            #print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n".format(epoch,loss, acc))
 
+            self.model.eval()
             for i, data in enumerate(self.val_dataloader):
 
                 label, output1, output2 = self.get_label_outputs(batch=data)
@@ -61,17 +76,17 @@ class Training():
 
                 val_acc += accuracy(output1, output2, label, self.THRESHOLD)
                 val_loss += loss_contrastive.item()
-                val_acc_loss_counter += 1
             
-            val_acc = val_acc/val_acc_loss_counter
-            val_loss = val_loss/val_acc_loss_counter
+            val_acc = val_acc/len(self.val_dataloader)
+            val_loss = val_loss/len(self.val_dataloader)
             val_acc_history.append(val_acc)
             val_loss_history.append(val_loss)
-            print("Epoch number {}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch,val_loss, val_acc))
-
+            #print("Epoch number {}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch,val_loss, val_acc))
+            print("Epoch number {}\n Current loss {:.4f}\n Current acc {:.2f}\n Current val_loss {:.4f}\n Current val_acc {:.2f}\n".format(epoch, loss, acc, val_loss, val_acc))
             epochs.append(epoch)
         return epochs, loss_history, val_loss_history, acc_history, val_acc_history
     
+
 
  
     def get_label_outputs(self, batch):

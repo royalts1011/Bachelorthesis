@@ -10,6 +10,10 @@ import time
 # set amount of pictures and pictures per step setting
 PICTURES  = 80
 STEP = 20
+RECT_COL = (0,255,0)
+
+DATASET_DIR = '../dataset'
+PIC_DIR = '../auth_dataset'
 
 # additional space around the ear to be captured
 # 0.1 is tightly around, 0.2 more generous 
@@ -17,13 +21,9 @@ SCALING = 0.2
 SCALING_H = 0.05
 SCALING_W = 0.2 
 
-INSTRUCTIONS = ["\n [INFO] Initializing ear capture. Turn your head left. Your right ear should then be facing the camera.", 
-                "Look into the camera and slowly turn your head 45 degrees to the left",
-                "Now look up, keeping the right ear towards the camera.",
-                "Now look down, keeping the right ear towards the camera."
-                ]
+INSTRUCTION = "\n [INFO] Initializing ear capture. Turn your head left. Your right ear should then be facing the camera."
+
 #########################################################################
-# assert PICTURES/10 <= (len(user_instructions))
 
 def make_720(object):
     object.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
@@ -53,23 +53,20 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
 
     ear_detector = cv2.CascadeClassifier('Cascades/haarcascade_mcs_rightear.xml')
 
-    if is_authentification == False:
-        # For each person, enter a new identification name
-        ear_name = input('\n Enter name end press <return> ==>  ')
-        dataset_dir = join(dirname(os.getcwd()), 'dataset')
-    else:
+    # Set correct folder path and person's name
+    target_folder = (DATASET_DIR, PIC_DIR)[is_authentification]
+    if is_authentification:
         ear_name = 'unknown'
-        dataset_dir = join(dirname(os.getcwd()), 'auth_dataset')
+        appendix = '-auth'
+    else:
+        ear_name = input('\n Enter name end press <return> ==>  ')
+        appendix = ''
 
-    
-    if not exists(dataset_dir):
-        os.mkdir(dataset_dir)
-
-    usr_dir = (join(dataset_dir, ear_name), join(dataset_dir, (ear_name + '-auth')))[is_authentification]
-    if not exists(usr_dir):
-        os.mkdir(usr_dir)
-
-    print(INSTRUCTIONS[0])
+#     ear_name = (input('\n Enter name end press <return> ==>  '), 'unknown')[is_authentification]   
+    if not exists(target_folder): os.mkdir(target_folder)
+    usr_dir = join(target_folder, ear_name + appendix)
+    if not exists(usr_dir): os.mkdir(usr_dir)
+    print(INSTRUCTION)
 
         
     # Initialize individual sampling ear count
@@ -88,10 +85,9 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
             top = y - int(h * SCALING_H)
             right = x + int(w * (1+SCALING_W))
             bottom = y + int(h * (1+SCALING_H))
-            green = (0,255,0)
-            cv2.rectangle(frame, (left, top), (right, bottom), color=green, thickness=1)   
-            count += 1
 
+            cv2.rectangle(frame, (left, top), (right, bottom), color=RECT_COL, thickness=1)   
+            count += 1
             cv2.imshow('Frame', frame)
 
             frame = frame[top+1:bottom, left+1:right] # +1 eliminates rectangle artifacts
@@ -103,9 +99,6 @@ def capture_ear_images(amount_pic=PICTURES, pic_per_stage=STEP, margin=SCALING, 
             # display after defined set of steps 
             if (count%pic_per_stage) == 0 and count != amount_pic:
                 print("\n [INFO] Next step commencing... \n")
-                # only include when instructions are wanted
-    #             current_step = int(count / pic_per_stage)
-    #             print(INSTRUCTIONS[current_step])
                 print(count)
                 input("Reposition your head and press <return> to continue.")
 

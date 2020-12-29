@@ -8,5 +8,5 @@
 .vscode/
 .idea/
 __pycache__/
-*.png
-*.pt
+model.pt
+/runs/*
